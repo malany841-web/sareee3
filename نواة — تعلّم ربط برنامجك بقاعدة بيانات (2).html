@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>نواة — من برنامج بسيط إلى تطبيق حقيقي</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+<style>
+:root{--bg:#f6f7fb;--pn:#fff;--p2:#eff1f7;--ink:#151a2c;--mu:#636b82;--ln:#e3e6ef;--pr:#4458f0;--b1:#4458f0;--ac:#ffb020;--ok:#12a150;--er:#e5484d;--sh:0 1px 2px #151a2c0d,0 10px 26px -14px #151a2c30;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b0e17;--pn:#131826;--p2:#1a2031;--ink:#eceff8;--mu:#9aa3bd;--ln:#252c42;--sh:0 10px 26px -14px #000c;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0b0e17;--pn:#131826;--p2:#1a2031;--ink:#eceff8;--mu:#9aa3bd;--ln:#252c42;--sh:0 10px 26px -14px #000c;color-scheme:dark}
+html{scroll-padding-top:calc(90px + env(safe-area-inset-top,0px))}*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Arabic",Tajawal,"Segoe UI",Tahoma,sans-serif;line-height:1.85;font-size:16px;min-height:100vh}
+body:before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:21;background:var(--bg)}
+:focus-visible{outline:2px solid var(--pr);outline-offset:2px}::selection{background:#4458f044}
+.hd{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--ln)}
+.hi{max-width:1180px;margin:auto;padding:12px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.br{display:flex;gap:11px;align-items:center;font-weight:700;font-size:23px;line-height:1.15}.br small{display:block;font-size:11px;color:var(--mu);font-weight:500}
+.nv{display:flex;gap:2px;background:var(--p2);border:1px solid var(--ln);border-radius:14px;padding:4px}
+.nv button{display:flex;align-items:center;gap:8px;border:0;background:none;color:var(--mu);font:inherit;font-weight:600;font-size:15px;padding:8px 16px;border-radius:10px;cursor:pointer;transition:.18s}.nv button svg{width:18px;height:18px}.nv button:hover{color:var(--ink)}.nv button.on{background:var(--pn);color:var(--pr);box-shadow:var(--sh)}
+.tl2{display:flex;gap:8px;align-items:center}.ib{width:38px;height:38px;border-radius:11px;border:1px solid var(--ln);background:var(--pn);color:var(--ink);display:grid;place-items:center;cursor:pointer;transition:.18s}.ib:hover{border-color:var(--pr);color:var(--pr)}.ib svg{width:18px;height:18px}
+.pp2{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;padding:4px 12px 4px 4px;border:1px solid var(--ln);border-radius:99px;background:var(--pn)}.pp2 i{width:30px;height:30px;border-radius:50%;background:conic-gradient(var(--pr) calc(var(--p,0)*1%),var(--ln) 0);display:grid;place-items:center}.pp2 i:after{content:"";width:22px;height:22px;border-radius:50%;background:var(--pn)}
+main{max-width:1180px;margin:auto;padding:36px 28px 90px}.view{display:none}.view.on{display:block;animation:in .35s ease}@keyframes in{from{opacity:0;transform:translateY(10px)}}
+h1{font-size:46px;line-height:1.25;font-weight:700}h2{font-size:26px;font-weight:700;margin-bottom:4px}h3{font-size:18px;font-weight:700}.g{color:var(--pr)}
+.lead{color:var(--mu);font-size:16.5px;max-width:700px;margin:8px 0 22px}
+.card{background:var(--pn);border:1px solid var(--ln);border-radius:16px;padding:22px;box-shadow:var(--sh)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:26px}
+.ico{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;background:color-mix(in srgb,var(--pr) 12%,var(--pn));color:var(--pr);margin-bottom:12px}.ico svg{width:22px;height:22px}
+.btn{display:inline-flex;gap:8px;align-items:center;justify-content:center;font:inherit;font-weight:600;font-size:15px;padding:11px 20px;border-radius:12px;border:1px solid transparent;background:var(--pr);color:#fff;cursor:pointer;transition:.18s;text-decoration:none}.btn:hover{filter:brightness(1.1)}.btn:active{transform:scale(.98)}
+.btn.o{background:var(--pn);color:var(--ink);border-color:var(--ln)}.btn.o:hover{border-color:var(--pr);color:var(--pr)}.btn.s{background:color-mix(in srgb,var(--pr) 12%,var(--pn));color:var(--pr)}.btn.lg{padding:14px 26px;font-size:16px}.btn svg{width:18px;height:18px}.btn[disabled]{opacity:.4;pointer-events:none}
+.tag{display:inline-block;font-size:12.5px;font-weight:600;background:color-mix(in srgb,var(--pr) 10%,var(--pn));color:var(--pr);border-radius:99px;padding:2px 12px}.warn{color:#b7791f;font-size:14px;margin-top:8px}.ac2{display:flex;gap:10px;flex-wrap:wrap}
+.hero{display:grid;grid-template-columns:1.2fr 1fr;gap:40px;align-items:center;margin:10px 0 50px}.hero h1{margin:14px 0 4px}.art{padding:20px}.art svg{width:100%;height:auto}
+.an{fill:var(--pn);stroke:var(--pr);stroke-width:2.5}.at{fill:var(--ink);font-size:14px;font-weight:600;text-anchor:middle;font-family:inherit}.al{stroke:var(--pr);stroke-width:2;stroke-dasharray:6 7;fill:none;opacity:.5;animation:df 1.2s linear infinite}@keyframes df{to{stroke-dashoffset:-13}}
+.nm{font-size:13px;font-weight:700;color:var(--pr)}
+.pl{display:grid;grid-template-columns:290px 1fr;gap:24px;align-items:start}.tl{position:sticky;top:90px;display:flex;flex-direction:column;gap:4px}
+.ti{display:flex;gap:12px;align-items:center;text-align:start;padding:10px 12px;border:1px solid transparent;border-radius:12px;background:none;font:inherit;color:var(--mu);cursor:pointer;transition:.15s}.ti:hover{background:var(--p2)}.ti.on{background:var(--pn);border-color:var(--ln);color:var(--ink);box-shadow:var(--sh);font-weight:600}
+.tn{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--p2);font-size:13px;font-weight:700;flex:none}.ti.on .tn{background:var(--pr);color:#fff}.ti.dn .tn{background:var(--ok);color:#fff}
+.td{padding:28px}.dc{display:grid;grid-template-columns:1.05fr 1fr;gap:28px;align-items:start;margin-top:14px}.c2{display:flex;flex-direction:column;gap:14px}.df{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:24px;padding-top:20px;border-top:1px solid var(--ln)}
+.steps{counter-reset:s;list-style:none;padding:0}.steps li{counter-increment:s;display:flex;gap:12px;margin-bottom:12px}.steps li:before{content:counter(s);flex:none;width:28px;height:28px;border-radius:50%;background:var(--pr);color:#fff;display:grid;place-items:center;font-size:13px;font-weight:700}
+.tp{background:color-mix(in srgb,var(--ac) 14%,var(--pn));border:1px solid color-mix(in srgb,var(--ac) 50%,transparent);border-radius:12px;padding:10px 14px;margin:8px 0;font-size:15px}.tp:before{content:"انتبه: ";font-weight:700}
+.eg{background:color-mix(in srgb,var(--pr) 8%,var(--pn));border:1px solid color-mix(in srgb,var(--pr) 25%,transparent);border-radius:12px;padding:10px 14px;font-size:15px}.eg b{color:var(--pr)}
+.sub{display:flex;gap:4px;margin-bottom:24px;border-bottom:1px solid var(--ln);overflow-x:auto}.sub button{background:none;border:0;border-bottom:2px solid transparent;padding:10px 16px;font:inherit;font-weight:600;color:var(--mu);cursor:pointer;white-space:nowrap}.sub .on{color:var(--pr);border-color:var(--pr)}.pn{display:none}.pn.on{display:block;animation:in .3s}.pn+.pn,hr{margin:0}hr{border:0;border-top:1px solid var(--ln);margin:38px 0 30px}
+details{background:var(--pn);border:1px solid var(--ln);border-radius:12px;padding:12px 16px;margin-bottom:8px}summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between}summary:after{content:"+";color:var(--pr);font-size:20px;line-height:1}details[open] summary:after{content:"−"}details p{color:var(--mu);margin-top:6px}
+.stage{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}.stage button{flex:1;min-width:120px;background:var(--pn);border:1px solid var(--ln);color:var(--mu);font:inherit;padding:12px 8px;border-radius:12px;cursor:pointer}.stage button.on{border-color:var(--pr);color:var(--ink);background:color-mix(in srgb,var(--pr) 7%,var(--pn))}.stage b{display:block;color:var(--pr)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}.vid{padding:14px}.vid svg{width:100%;height:auto;display:block}.bar{display:flex;gap:6px;margin:12px 0}.bar i{flex:1;height:6px;border-radius:9px;background:var(--ln);cursor:pointer}.bar i.on{background:var(--pr)}.cap{margin-bottom:10px}.cap b{font-size:18px}
+.nd rect,.nd path,.nd ellipse{fill:var(--p2);stroke:var(--mu);stroke-width:2;transition:.3s}.nd.on rect,.nd.on path,.nd.on ellipse{stroke:var(--pr);fill:color-mix(in srgb,var(--pr) 14%,var(--pn));stroke-width:3}.nd text{fill:var(--ink);font-size:15px;font-weight:600;text-anchor:middle;font-family:inherit}
+#pk{transition:transform 1.1s ease-in-out;fill:var(--ac)}.lnk{stroke:var(--ln);stroke-width:2;stroke-dasharray:6 6;fill:none}
+.chk{display:flex;gap:12px;align-items:center;padding:12px 16px;border:1px solid var(--ln);border-radius:12px;margin-bottom:8px;cursor:pointer;background:var(--pn);transition:.15s}.chk:hover{border-color:var(--pr)}.chk:has(input:checked){border-color:var(--pr);background:color-mix(in srgb,var(--pr) 7%,var(--pn))}.chk input{width:18px;height:18px;accent-color:var(--pr)}
+.out li{margin:0 20px 10px}.out b{color:var(--pr)}label{font-weight:600;font-size:14px}
+input[type=text],select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--p2);border:1px solid var(--ln);border-radius:10px;padding:10px 14px;margin:4px 0 14px}input:focus,select:focus,textarea:focus{border-color:var(--pr);outline:0;box-shadow:0 0 0 3px #4458f025}textarea{min-height:230px;line-height:1.75;font-size:14px;resize:vertical}
+.tb{border-collapse:collapse;margin:0 auto;min-width:280px}.tb th,.tb td{border:1px solid var(--ln);padding:6px 16px;text-align:center}.tb th{background:var(--pr);color:#fff}
+.fl{width:100%;height:auto;background:var(--p2);border-radius:12px;padding:4px}.fb rect{fill:var(--pn);stroke:var(--pr);stroke-width:2}.fb.l rect{fill:color-mix(in srgb,var(--pr) 12%,var(--pn))}.fb text{fill:var(--ink);font-size:15px;font-weight:600;text-anchor:middle;font-family:inherit}.ar{stroke:var(--mu);stroke-width:2.4;fill:none;stroke-linecap:round}
+.mw{border:1px solid var(--ln);border-radius:12px;background:var(--pn);overflow:hidden}.mt{display:flex;align-items:center;gap:6px;padding:8px 12px;background:var(--p2);border-bottom:1px solid var(--ln);font-size:12px;color:var(--mu)}.mt i{width:9px;height:9px;border-radius:50%;background:var(--ln)}.mt span{margin-inline-start:8px}.mb{padding:14px;display:flex;flex-direction:column;gap:10px}
+.cd{direction:ltr;text-align:left;font-family:ui-monospace,Consolas,monospace;font-size:12.5px;line-height:1.7;background:#0f1420;color:#d6e2ef;border-radius:10px;padding:12px;white-space:pre;overflow:auto}
+.fl2{display:flex;gap:10px;flex-wrap:wrap}.fl2 span{display:flex;align-items:center;gap:8px;padding:9px 12px;border:1px solid var(--ln);border-radius:10px;background:var(--p2);font-size:14px;direction:ltr}.fl2 .o{border-color:var(--ok)}.fl2 small{color:var(--ok);direction:rtl}
+.bu{padding:10px 14px;border-radius:14px;font-size:14px;max-width:92%}.bu.me{background:var(--p2);align-self:flex-start;border:1px solid var(--ln)}.bu.ai{background:color-mix(in srgb,var(--pr) 10%,var(--pn));align-self:flex-end}.chip{display:flex;gap:6px;align-items:center;width:max-content;margin-top:6px;font-size:12px;border:1px solid var(--ln);border-radius:8px;padding:2px 8px;direction:ltr}
+.fm label{display:block;font-size:12px;color:var(--mu);margin-top:6px}.ip{border:1px solid var(--ln);border-radius:8px;padding:6px 10px;font-size:14px;background:var(--p2)}.bt{display:inline-block;background:var(--pr);color:#fff;border-radius:8px;padding:5px 14px;font-size:13px;margin-top:10px}.rn{display:flex;gap:12px;align-items:center}.rn .bt{margin:0}.rn .ok{color:var(--ok);font-size:13px;direction:ltr}
+.lk,.ky{display:flex;gap:12px;align-items:center;padding:12px 14px;border:1px solid var(--ln);border-radius:12px}.lk small,.ky small{display:block;color:var(--mu);font-size:13px}.lk svg,.ky.good svg{color:var(--ok)}.ky.good{border-color:var(--ok)}.ky.bad{border-color:var(--er)}.ky.bad svg{color:var(--er)}
+.dv{display:flex;align-items:center;justify-content:space-around;text-align:center}.dv span{padding:12px 18px;border:1px solid var(--ln);border-radius:12px;background:var(--p2)}.dv small{color:var(--ok)}
+#md{position:fixed;inset:0;z-index:98;background:#05081099;backdrop-filter:blur(5px);display:none;place-items:center;padding:20px}#md.on{display:grid}.mc{max-width:660px;width:100%;max-height:90vh;overflow:auto}
+#toast{position:fixed;bottom:calc(80px + env(safe-area-inset-bottom,0px));left:50%;transform:translate(-50%,90px);background:var(--ink);color:var(--bg);padding:10px 22px;border-radius:99px;transition:.3s;z-index:100}#toast.on{transform:translate(-50%,0)}
+.cf{position:fixed;width:8px;height:12px;border-radius:2px;z-index:120;pointer-events:none;animation:cf 1s cubic-bezier(.2,.8,.3,1) forwards}@keyframes cf{to{transform:translate(var(--dx),calc(var(--dy) + 120px)) rotate(var(--r));opacity:0}}
+#splash{position:fixed;inset:0;z-index:99;display:grid;place-items:center;text-align:center;background:radial-gradient(ellipse at 50% 40%,#1b2352,#0a0d1a 72%);color:#eef0fb;transition:opacity .7s,visibility .7s}#splash.off{opacity:0;visibility:hidden}
+.sg{position:absolute;width:440px;height:440px;border-radius:50%;background:radial-gradient(circle,#4458f040,transparent 65%);animation:br 5s ease-in-out infinite}@keyframes br{50%{transform:scale(1.15);opacity:.7}}
+.sc{position:relative;display:flex;flex-direction:column;align-items:center}.sm{width:116px;animation:fu 1s .1s both ease-out}.sw{font-size:60px;font-weight:700;margin-top:22px;animation:fu .9s 1.5s both}.st{color:#a3abd0;font-size:18px;animation:fu .9s 2s both}
+.sbar{width:200px;height:3px;border-radius:9px;background:#ffffff1c;margin:34px 0 22px;overflow:hidden;animation:fu .6s 2.1s both}.sbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#4458f0,#ffb020);animation:ld2 1.5s 2.2s ease-in-out forwards}@keyframes ld2{to{width:100%}}
+.sbtn{opacity:0;pointer-events:none;transition:.6s;background:#4458f0;color:#fff;border:0;padding:12px 38px;border-radius:12px;font:inherit;font-weight:600;cursor:pointer}.sbtn.on{opacity:1;pointer-events:auto}@keyframes fu{from{opacity:0;transform:translateY(14px)}}
+.d .rg2{stroke-dasharray:100;stroke-dashoffset:100;animation:dw 1.2s .3s ease forwards}.d .co{transform-box:fill-box;transform-origin:center;transform:scale(0);animation:pp .6s .9s cubic-bezier(.2,1.6,.4,1) forwards}.d .ob{opacity:0;animation:fi .5s 1.4s forwards,orb 6s 1.4s linear infinite;transform-origin:32px 32px}
+@keyframes dw{to{stroke-dashoffset:0}}@keyframes pp{to{transform:scale(1)}}@keyframes fi{to{opacity:1}}@keyframes orb{to{transform:rotate(-360deg)}}
+@media(max-width:860px){.hi{flex-wrap:wrap;padding:10px 16px}.nv{position:fixed;bottom:calc(10px + env(safe-area-inset-bottom,0px));left:12px;right:12px;z-index:30;justify-content:space-around;background:var(--pn);box-shadow:0 8px 30px #0003}.nv button span{display:none}main{padding:22px 16px 100px}h1{font-size:32px}.hero,.pl,.dc,.two{grid-template-columns:1fr}.tl{position:static;flex-direction:row;overflow-x:auto}.ti span:last-child{white-space:nowrap}.pp2 span{display:none}.pp2{padding:4px}.sw{font-size:46px}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-delay:0s!important;transition-duration:.01ms!important}}
+kbd{font-family:inherit;font-size:11px;border:1px solid var(--ln);border-bottom-width:2px;border-radius:6px;padding:0 6px;background:var(--p2);color:var(--mu);margin-inline-start:4px}
+.sbt{display:flex;align-items:center;gap:10px;width:100%;padding:10px 14px;border:1px solid var(--ln);border-radius:12px;background:var(--p2);color:var(--mu);font:inherit;font-size:14px;cursor:pointer}.sbt:hover{border-color:var(--pr)}.sbt kbd{margin-inline-start:auto}.sbt svg{width:17px;height:17px}
+.ov{position:fixed;inset:0;z-index:98;background:#05081099;backdrop-filter:blur(5px);display:none;place-items:start center;padding:12vh 20px 20px}.ov.on{display:grid}
+.pal{width:min(620px,100%);background:var(--pn);border:1px solid var(--ln);border-radius:16px;box-shadow:0 30px 80px #0006;overflow:hidden}.pi{display:flex;align-items:center;gap:10px;padding:6px 16px;border-bottom:1px solid var(--ln)}.pi input{border:0;background:none;margin:0;box-shadow:none!important;font-size:17px;padding:12px 0}.pi svg{color:var(--mu);flex:none}
+.cr{display:flex;justify-content:space-between;width:100%;padding:11px 18px;border:0;background:none;font:inherit;color:var(--ink);cursor:pointer;text-align:start}.cr.on,.cr:hover{background:color-mix(in srgb,var(--pr) 10%,var(--pn))}.cr small{color:var(--mu)}.ph{padding:8px 16px;font-size:12px;color:var(--mu);border-top:1px solid var(--ln)}
+.sh2{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.sws{display:flex;gap:10px;margin:6px 0 14px}.sws button{width:32px;height:32px;border-radius:50%;border:3px solid var(--pn);box-shadow:0 0 0 1px var(--ln);cursor:pointer}.sws button.on{box-shadow:0 0 0 2px var(--ink)}
+.seg{display:inline-flex;border:1px solid var(--ln);border-radius:10px;overflow:hidden;margin:6px 0 14px}.seg button{border:0;background:var(--pn);padding:7px 18px;font:inherit;color:var(--mu);cursor:pointer}.seg .on{background:var(--pr);color:#fff}.ks{display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;font-size:14px;color:var(--mu);margin-top:6px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:34px}.stats .card{display:flex;gap:16px;align-items:center;padding:18px}.stats .ico{margin:0}.stats small{color:var(--mu)}
+.rg3{width:58px;height:58px;border-radius:50%;background:conic-gradient(var(--pr) calc(var(--p)*1%),var(--ln) 0);display:grid;place-items:center;flex:none;position:relative;font-style:normal}.rg3:after{content:"";position:absolute;inset:6px;border-radius:50%;background:var(--pn)}.rg3 b{position:relative;z-index:1;font-size:13px}
+.rp{display:flex;flex-direction:column;gap:14px}.rp h3 svg{width:17px;height:17px;vertical-align:-3px}.rp textarea{min-height:150px;margin:8px 0 0;font-size:14px}.tbar:has(:empty){display:none}.tbar{margin-bottom:14px}.tbar .tag:empty{display:none}.view{zoom:var(--z,1)}
+.qc{margin-bottom:12px}.qo.ok2{background:var(--ok);color:#fff;border-color:var(--ok)}.qo.bad2{background:var(--er);color:#fff;border-color:var(--er)}.qe{color:var(--mu);font-size:15px}
+@media(min-width:981px){.hd{position:fixed;top:0;bottom:0;inset-inline-start:0;width:272px;border-bottom:0;border-inline-end:1px solid var(--ln);background:var(--pn);backdrop-filter:none}body:before{display:none}
+.hi{height:100%;max-width:none;padding:22px 16px;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:16px}.nv{flex-direction:column;background:none;border:0;padding:0;gap:3px}.nv button{padding:11px 14px;font-size:15.5px}.nv button.on{background:color-mix(in srgb,var(--pr) 12%,var(--pn));color:var(--pr);box-shadow:none}
+.tl2{margin-top:auto;flex-wrap:wrap}.pp2{flex:1 1 100%;border-radius:14px;padding:10px 14px}main{margin-inline-start:272px;max-width:none;padding:26px 48px 70px}.view{max-width:1400px;margin-inline:auto}
+.pl{grid-template-columns:240px minmax(0,1fr) 290px;gap:22px}.tl,.rp{position:sticky;top:20px}.hero h1{font-size:50px}}
+@media(max-width:980px){.stats{grid-template-columns:1fr}.ks{grid-template-columns:1fr}.sbt{display:none}}
+.lp{font-size:17px;line-height:2;margin:0 0 12px}.lv{margin:18px 0}.rel{display:flex;gap:16px;align-items:center;flex-wrap:wrap;justify-content:center}.cc{text-align:start;cursor:pointer;font:inherit;color:var(--ink);display:block}.cc:hover{border-color:var(--pr)}.cc small{color:var(--mu)}
+.lab{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:20px;align-items:start}.lcol{display:flex;flex-direction:column;gap:16px}
+#sq2{direction:ltr;text-align:left;font-family:ui-monospace,Consolas,monospace;font-size:14px;min-height:140px;background:#0f1420;color:#d6e2ef;border-color:#0f1420;white-space:pre}
+.exc{padding:14px 0;border-bottom:1px solid var(--ln)}.exc:last-child{border:0}.exc p{color:var(--mu);font-size:15px;margin:2px 0 8px}.exc .cd{margin-bottom:10px;white-space:pre-wrap}.er{color:var(--er)}.okm{color:var(--ok)}.lq{margin:22px 0}
+@media(max-width:980px){.lab{grid-template-columns:1fr}}
+#bkt{direction:ltr;text-align:left;font-family:ui-monospace,Consolas,monospace;min-height:150px;font-size:13px;white-space:pre;margin-bottom:12px}
+.vl{display:flex;gap:8px;align-items:center;padding:8px 10px;margin-top:6px;border:1px solid var(--ln);border-radius:10px;color:var(--ink);text-decoration:none;font-size:14px;line-height:1.5}.vl:hover{border-color:var(--pr);color:var(--pr)}.vl svg{flex:none;width:17px;height:17px;color:var(--pr)}.vh{display:block;margin-top:12px;font-weight:700;color:var(--mu)}.note{color:var(--mu);font-size:12.5px;margin-top:10px;line-height:1.6}
+.aic{background:linear-gradient(135deg,color-mix(in srgb,var(--pr) 14%,var(--pn)),var(--pn));border-color:color-mix(in srgb,var(--pr) 35%,var(--ln))}.aic p{color:var(--mu);font-size:14.5px;margin:4px 0 12px}.rp h3 svg{vertical-align:-3px}
+.wn{color:#b7791f}#dsql,#demo{direction:ltr;text-align:left;font-family:ui-monospace,Consolas,monospace;font-size:12.5px;background:#0f1420;color:#d6e2ef;border-color:#0f1420;white-space:pre;margin-bottom:10px}#dsql{min-height:230px}#demo{min-height:380px}
+/* v2: palm-green identity, mobile-first fixes */
+:root{--bg:#f7f3ea;--pn:#fffdf8;--p2:#f1ebdd;--ink:#1d2a24;--mu:#5f6f66;--ln:#e6dfd0;--pr:#17805a;--b1:#17805a;--ac:#e8a93a;--ok:#17805a;--er:#cc3d3d;--pt:var(--pr);--sh:0 1px 2px #1d2a240d,0 10px 24px -16px #1d2a2433}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1512;--pn:#141f1a;--p2:#1a2822;--ink:#ecf3ee;--mu:#98ab9f;--ln:#263630;--ok:#4bc08e;--er:#ef6b6b;--pt:color-mix(in srgb,var(--pr) 55%,#fff);--sh:0 10px 26px -14px #000c}}
+:root[data-theme="dark"]{--bg:#0d1512;--pn:#141f1a;--p2:#1a2822;--ink:#ecf3ee;--mu:#98ab9f;--ln:#263630;--ok:#4bc08e;--er:#ef6b6b;--pt:color-mix(in srgb,var(--pr) 55%,#fff);--sh:0 10px 26px -14px #000c}
+::selection{background:color-mix(in srgb,var(--pr) 30%,transparent)}body:before{display:none}
+.g,.nm,.eg b,.vl:hover,.vl svg,.nv button.on,.btn.s,.btn.o:hover,.ico,.stage b,.out b,summary:after,.ib:hover,.tag{color:var(--pt)}
+input:focus,select:focus,textarea:focus{box-shadow:0 0 0 3px color-mix(in srgb,var(--pr) 25%,transparent)!important}
+.cd,#sq2,#dsql,#demo{background:#0e1814;border-color:#0e1814}
+.btn.o.act{background:var(--pr);color:#fff;border-color:var(--pr)}
+.qo.ok2:before,.lo.ok2:before{content:"✓ "}.qo.bad2:before,.lo.bad2:before{content:"✗ "}
+.hl{background:color-mix(in srgb,var(--ac) 30%,var(--pn))!important}.rw{cursor:pointer}
+.sim{margin-top:14px}.tl3{list-style:none;padding:0;margin:0 0 8px;min-height:84px}.tl3 li{padding:6px 0;border-bottom:1px solid var(--ln);font-size:14px}.nw{animation:fl2 1.2s}@keyframes fl2{from{background:color-mix(in srgb,var(--ac) 45%,transparent)}to{background:transparent}}
+.chp{padding:6px 12px;font-size:13px;border-radius:99px}
+#cur{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px}.cl{display:flex;gap:12px;align-items:center;padding:12px 14px;border:1px solid var(--ln);border-radius:14px;background:var(--pn);font:inherit;color:var(--ink);text-align:start;cursor:pointer;transition:.15s}.cl:hover{border-color:var(--pr)}.cl b{display:block;font-size:15.5px;line-height:1.5}.cl small{color:var(--mu)}.cl.dn .tn{background:var(--ok);color:#fff}
+.lv{overflow-x:auto}.tb th,.tb td{padding:6px 10px;font-size:14px}.tb th{background:var(--pr)}
+.sub{flex-wrap:wrap;overflow:visible;border-bottom:0;gap:6px}.sub button{border:1px solid var(--ln);border-radius:99px;padding:6px 14px;background:var(--pn)}.sub .on{background:var(--pr);color:#fff;border-color:var(--pr)}
+.ico{width:40px;height:40px;border-radius:12px;margin-bottom:10px}.ico svg{width:20px;height:20px}
+#splash{background:radial-gradient(ellipse at 50% 38%,#17402f,#08130f 72%);color:#f4efe2}.sg{background:radial-gradient(circle,#e8a93a33,transparent 65%)}
+.rpl{position:absolute;width:240px;height:240px;border:1.5px solid #e8a93a66;border-radius:50%;animation:rpl 4.5s ease-out infinite}@keyframes rpl{from{transform:scale(.5);opacity:.7}to{transform:scale(2.8);opacity:0}}
+.sw{color:#f4efe2}.st{color:#b9c9bd}.sbtn{margin-top:34px;background:var(--pr);border:0}
+.d .sd{transform-box:fill-box;transform-origin:center;transform:scale(0);animation:pp .7s .4s cubic-bezier(.2,1.5,.4,1) forwards}
+.d .lf1{transform-box:fill-box;transform-origin:100% 100%;transform:scale(0);animation:pp .7s 1.2s ease-out forwards}.d .lf2{transform-box:fill-box;transform-origin:0 100%;transform:scale(0);animation:pp .7s 1.4s ease-out forwards}
+@media(max-width:980px){
+.hd{backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--bg)}
+.hi{flex-wrap:nowrap;padding:8px 14px;gap:8px}.br{font-size:20px;gap:8px}.br small{display:none}.br>span{width:34px!important}
+.tl2{gap:6px;flex-wrap:nowrap}.ib{width:36px;height:36px}#ri{display:none}.pp2{padding:3px}
+.nv{position:fixed;bottom:0;left:0;right:0;z-index:30;display:grid;grid-template-columns:repeat(6,1fr);gap:0;border:0;border-top:1px solid var(--ln);border-radius:0;padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px));background:var(--pn);box-shadow:0 -6px 20px #0002}
+.nv button{flex-direction:column;gap:3px;padding:6px 2px;font-size:10.5px;line-height:1.25;text-align:center;border-radius:10px;justify-content:flex-start}.nv button span{display:block!important}.nv button svg{width:20px;height:20px}.nv button.on{background:color-mix(in srgb,var(--pr) 14%,var(--pn))}
+main{padding:16px 14px 96px}
+.tl{position:static;flex-direction:row;flex-wrap:wrap;overflow:visible;gap:6px}.ti{padding:0;border:0;background:none}.ti span:last-child{display:none}.tn{width:34px;height:34px;font-size:14px}.ti.on{box-shadow:none;background:none}.ti.on .tn{box-shadow:0 0 0 3px color-mix(in srgb,var(--pr) 35%,transparent)}
+.card{padding:16px}.td{padding:18px}.lp{font-size:16px;line-height:1.9}h1{font-size:30px}h2{font-size:22px}
+.stats .card{padding:12px 14px}.rg3{width:46px;height:46px}.rg3:after{inset:5px}
+.lq .ac2 .btn{flex:1 1 100%;justify-content:flex-start}.hero{gap:20px;margin:0 0 28px}.art{padding:10px}.cd{font-size:12px}
+#toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))}}
+</style>
+</head>
+<body>
+<div id="splash"><div class="sg"></div><i class="rpl"></i><i class="rpl" style="animation-delay:2s"></i><div class="sc"><div class="sm" id="il"></div><h1 class="sw">نواة</h1><p class="st">من نواة بسيطة… إلى تطبيق حقيقي</p><button class="sbtn" id="sk">ابدأ التعلّم</button></div></div>
+<header class="hd"><div class="hi"><div class="br"><span style="width:38px" id="bl"></span><div>نواة<small>تعلّم ربط برنامجك بقاعدة بيانات</small></div></div><button class="sbt" id="sq"><i data-lucide="search"></i>ابحث في الدليل<kbd>Ctrl K</kbd></button><nav class="nv" id="nv"></nav><div class="tl2"><div class="pp2" id="pp2"><i></i><span id="pq"></span></div><button class="ib" id="sg" title="الإعدادات"><i data-lucide="settings"></i></button><button class="ib" id="sn" title="الصوت"></button><button class="ib" id="th" title="المظهر"><i data-lucide="sun-moon"></i></button><button class="ib" id="ri" title="إعادة الانترو"><i data-lucide="clapperboard"></i></button></div></div></header>
+<main>
+<div class="tbar"><span class="tag" id="pjc"></span></div>
+<section class="view" id="v-home"><div class="hero"><div><span class="tag">للمبتدئين · بدون خبرة سابقة</span><h1>تعلّم كيف تربط برنامجك بـ<span class="g">قاعدة بيانات</span> من الصفر</h1><p class="lead">كورس بالعربي للمبتدئين: محاضرات مبسّطة بالرسوم والأمثلة، ومختبر SQL تجرّب فيه بنفسك، وتطبيق عملي خطوة بخطوة.</p><div class="ac2"><button class="btn lg" data-go="lec"><i data-lucide="graduation-cap"></i>ابدأ المحاضرات</button><button class="btn o lg" id="hb" data-go="path"></button></div></div>
+<div class="card art"><svg viewBox="0 0 420 250"><path class="al" d="M290 125H225M150 125H95"/><circle r="6" fill="#ffb020"><animateMotion dur="3s" repeatCount="indefinite" path="M330 125H80"/></circle><rect class="an" x="300" y="75" width="80" height="100" rx="10"/><path class="al" style="animation:none;opacity:.9" d="M318 105h44M318 125h44M318 145h28"/><path class="an" d="M125 100v50c0 12 25 18 50 18s50-6 50-18v-50c0-12-25-18-50-18s-50 6-50 18zM125 100c0 12 25 18 50 18s50-6 50-18"/><rect class="an" x="36" y="68" width="60" height="114" rx="14"/><circle cx="66" cy="168" r="4" fill="var(--pr)"/><text class="at" x="340" y="212">ملفك</text><text class="at" x="175" y="212">قاعدة البيانات</text><text class="at" x="66" y="212">تطبيقك</text></svg></div></div>
+<div class="stats" id="hs"></div>
+<h2>ماذا ستتعلّم؟</h2><p class="lead" style="margin-bottom:18px">ثلاث مهارات تبني عليها أي مشروع.</p>
+<div class="grid"><div class="card"><div class="ico"><i data-lucide="database"></i></div><h3>تفهم قاعدة البيانات</h3><p class="lead" style="margin:4px 0 0;font-size:15px">جداول وأعمدة وصفوف ومفاتيح، بأمثلة من حياتك اليومية.</p></div><div class="card"><div class="ico"><i data-lucide="terminal"></i></div><h3>تكتب SQL بنفسك</h3><p class="lead" style="margin:4px 0 0;font-size:15px">تجرّب الأوامر في مختبر آمن داخل الصفحة.</p></div><div class="card"><div class="ico"><i data-lucide="shield-check"></i></div><h3>تربط برنامجك بأمان</h3><p class="lead" style="margin:4px 0 0;font-size:15px">المفاتيح وسياسات الحماية والنسخ الاحتياطي.</p></div></div>
+<h2>منهج الكورس</h2><p class="lead" style="margin-bottom:18px">ست عشرة محاضرة قصيرة: أساسيات، ثم مواضيع متقدمة مثل النسخ الاحتياطي وتعدد المستخدمين والأداء.</p><div class="grid" id="cur"></div></section>
+<section class="view" id="v-lec"><div class="pl"><div class="tl" id="ll"></div><div class="card td" id="ld"></div><aside class="rp" id="lr"></aside></div></section>
+<section class="view" id="v-lab"><h2>مختبر SQL</h2><p class="lead">جرّب أوامر SQL بنفسك بأمان: كل شي يصير داخل المتصفح ولا يمس أي بيانات حقيقية. اتبع التمارين بالترتيب.</p><div class="lab"><div class="card"><h3>التمارين</h3><details><summary>ما المدعوم في المختبر؟</summary><p>create table · insert · select (مع where وand/or وlike، وjoin وleft join، وgroup by، وorder by، وlimit، ودوال count/sum/avg/min/max) · update · delete · drop table. أسماء الجداول والأعمدة بالإنجليزية، وشرط الربط بعمودين فقط.</p></details><div id="exl"></div></div><div class="lcol"><div class="card"><h3>تحدٍّ</h3><div id="chq"></div><div class="ac2" style="margin-top:10px"><button class="btn" id="chb"><i data-lucide="check-check"></i>تحقق من إجابتي</button><button class="btn o" id="chn"><i data-lucide="arrow-left"></i>التحدي التالي</button></div><div id="chm" style="margin-top:8px"></div><p class="note">اكتب أمرك في المحرر ثم اضغط «تحقق». يُختبر على جداول تجريبية جاهزة (expenses وcustomers وorders) ولا يمس جداولك.</p></div><div class="card"><textarea id="sq2" spellcheck="false" placeholder="اكتب أمر SQL هنا…"></textarea><div class="ac2"><button class="btn" id="run"><i data-lucide="play"></i>تشغيل (Ctrl+Enter)</button><button class="btn o" id="rsl"><i data-lucide="eraser"></i>مسح الجداول</button></div></div><div class="card" id="out2"></div><div class="card" id="tbs"></div><div class="card"><h3>نسخة احتياطية كنص</h3><p class="lead" style="margin:4px 0 12px;font-size:15px">صدّر جداولك كنص JSON وانسخه، ثم امسح الجداول وجرّب الاستعادة منه.</p><textarea id="bkt" spellcheck="false" placeholder="هنا يظهر نص النسخة، أو الصق نسخة سابقة لاستعادتها…"></textarea><div class="ac2"><button class="btn" id="bke"><i data-lucide="download"></i>صدّر كنص</button><button class="btn o" data-copy="bkt"><i data-lucide="copy"></i>نسخ</button><button class="btn o" id="bkr"><i data-lucide="upload"></i>استعد من النص</button></div><p id="bkm" class="qe" style="margin-top:10px"></p></div></div></div></section>
+<section class="view" id="v-demo"><h2>برنامج التجربة: أول ربط حقيقي</h2><p class="lead">برنامج مصاريف صغير جاهز، تشغّله على حاسوبك وتربطه بقاعدة بياناتك بنفسك. فيه «فاحص اتصال» يقول لك شنو المشكلة إذا ما اشتغل.</p>
+<div class="card" style="margin-bottom:16px"><span class="tag">الخطوة 1</span><h3 style="margin:8px 0 4px">جهّز الجدول</h3><p class="lead" style="margin:0 0 12px;font-size:15px">في Supabase افتح SQL Editor ← New query، والصق هذا الكود واضغط Run.</p><textarea id="dsql" readonly>create table if not exists expenses (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  amount numeric not null,
+  created_at timestamptz default now()
+);
+
+alter table expenses enable row level security;
+
+-- سياسات للتجربة فقط: تسمح لأي شخص يملك المفتاح العام
+create policy "demo read" on expenses for select using (true);
+create policy "demo insert" on expenses for insert with check (true);
+create policy "demo delete" on expenses for delete using (true);</textarea><div class="ac2"><button class="btn s" data-copy="dsql"><i data-lucide="copy"></i>نسخ كود الجدول</button></div><p class="tp">هذي السياسات للتجربة فقط: تسمح لأي شخص يملك المفتاح العام بالقراءة والإضافة والحذف. استخدم بيانات وهمية، وبعدها نشدّدها بسياسات المستخدمين (المحاضرتان 6 و11).</p></div>
+<div class="card" style="margin-bottom:16px"><span class="tag">الخطوة 2</span><h3 style="margin:8px 0 4px">افحص مفاتيحك قبل الاستخدام</h3><p class="lead" style="margin:0 0 12px;font-size:15px">من Project Settings ← API انسخ Project URL والمفتاح العام (anon أو publishable). الفحص يتم داخل هذه الصفحة فقط ولا يرسل شيئاً لأي مكان.</p><div class="two"><div><label>Project URL</label><input type="text" id="ku" dir="ltr" placeholder="https://xxxx.supabase.co"></div><div><label>المفتاح العام</label><input type="text" id="kk" dir="ltr" placeholder="eyJ… أو sb_publishable_…"></div></div><button class="btn" id="kb"><i data-lucide="shield-check"></i>افحص المفاتيح</button><div id="kr" style="margin-top:12px"></div></div>
+<div class="card" style="margin-bottom:16px"><span class="tag">الخطوة 3</span><h3 style="margin:8px 0 4px">احفظ برنامج التجربة وشغّله</h3><p class="lead" style="margin:0 0 12px;font-size:15px">انسخ الكود، والصقه في Notepad، واحفظه باسم <b>expenses-test.html</b> (اختر «All files»)، ثم افتحه بالمتصفح، والصق الرابط والمفتاح، واضغط «حفظ وفحص الاتصال».</p><textarea id="demo" readonly spellcheck="false"><!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>برنامج مصاريفي (تجربة)</title>
+<style>
+body{font-family:Tahoma,Arial,sans-serif;max-width:720px;margin:24px auto;padding:0 16px;background:#f6f7fb;color:#151a2c}
+.c{background:#fff;border:1px solid #e3e6ef;border-radius:14px;padding:16px;margin-bottom:14px}
+input,button{font:inherit;padding:9px 12px;border-radius:9px;border:1px solid #cfd4e2}
+button{background:#4458f0;color:#fff;border:0;cursor:pointer}button.g{background:#eef0f8;color:#151a2c}
+.r{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.ok{color:#12a150}.er{color:#e5484d}.wn{color:#b7791f}
+ul{list-style:none;padding:0}li{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee}
+</style></head><body>
+<h2>برنامج مصاريفي (تجربة)</h2>
+<div class="c"><b>1) الاتصال</b>
+<div class="r"><input id="u" placeholder="Project URL" style="flex:2;direction:ltr"><input id="k" placeholder="المفتاح العام" style="flex:2;direction:ltr"></div>
+<div class="r"><button onclick="save()">حفظ وفحص الاتصال</button></div><div id="st"></div></div>
+<div class="c"><b>2) أضف مصروفاً</b><div class="r"><input id="t" placeholder="البند"><input id="a" type="number" placeholder="المبلغ"><button onclick="add()">إضافة</button></div></div>
+<div class="c"><b>3) المصاريف</b> <span id="sum"></span><ul id="ls"></ul><div class="r"><button class="g" onclick="load()">تحديث</button><button class="g" onclick="exp()">تصدير نسخة JSON</button></div></div>
+<script>
+const $=s=>document.getElementById(s);
+const e=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML};
+let U=localStorage.getItem('u')||'',K=localStorage.getItem('k')||'';$('u').value=U;$('k').value=K;
+const H=()=>{const h={apikey:K,'Content-Type':'application/json'};if(K.startsWith('eyJ'))h.Authorization='Bearer '+K;return h};
+const say=(c,t)=>{$('st').innerHTML+='<p class="'+c+'">'+t+'</p>'};
+async function save(){
+  U=$('u').value.trim().replace(/\/$/,'');K=$('k').value.trim();
+  localStorage.setItem('u',U);localStorage.setItem('k',K);$('st').innerHTML='';
+  if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(U))return say('er','الرابط غلط. الشكل الصحيح: https://xxxx.supabase.co');
+  if(!K)return say('er','المفتاح فارغ');
+  if(K.startsWith('sb_secret_'))return say('er','هذا مفتاح سري! لا تستخدمه هنا. استخدم المفتاح العام.');
+  try{const p=JSON.parse(atob(K.split('.')[1]));if(p.role==='service_role')return say('er','هذا مفتاح service_role السري! لا تضعه في برنامج، وغيّره من لوحة Supabase.')}catch(x){}
+  say('ok','الشكل سليم. أجرّب الاتصال...');
+  try{
+    const r=await fetch(U+'/rest/v1/expenses?select=id&limit=1',{headers:H()});
+    if(r.ok){say('ok','متصل والجدول expenses موجود ✓');load()}
+    else if(r.status===401||r.status===403)say('er','رفض الوصول ('+r.status+'): المفتاح غلط أو ناقص، أو سياسة RLS تمنع العملية.');
+    else if(r.status===404)say('er','الجدول expenses غير موجود. شغّل ملف SQL من الخطوة الأولى.');
+    else say('wn','رد غير متوقع: '+r.status+' '+e(await r.text()));
+  }catch(x){say('er','فشل الوصول للخادم (Failed to fetch): تأكد من الرابط ومن الإنترنت.')}
+}
+async function load(){
+  try{
+    const r=await fetch(U+'/rest/v1/expenses?select=*&order=created_at.desc',{headers:H()});
+    const d=await r.json();if(!r.ok)throw 0;
+    $('ls').innerHTML=d.map(x=>'<li><span>'+e(x.title)+'</span><span>'+e(x.amount)+' <button class="g" onclick="del(\''+e(x.id)+'\')">حذف</button></span></li>').join('')||'<li>لا توجد مصاريف. إذا أضفت مصروفاً وبقيت القائمة فارغة، فغالباً سياسة القراءة (select) ناقصة.</li>';
+    $('sum').textContent='المجموع: '+d.reduce((s,x)=>s+Number(x.amount),0);
+  }catch(x){$('ls').innerHTML='<li class="er">تعذّر التحميل. اضغط «حفظ وفحص الاتصال» أولاً.</li>'}
+}
+async function add(){
+  const t=$('t').value.trim(),a=$('a').value;
+  if(!t||a==='')return alert('اكتب البند والمبلغ');
+  const r=await fetch(U+'/rest/v1/expenses',{method:'POST',headers:{...H(),Prefer:'return=minimal'},body:JSON.stringify({title:t,amount:Number(a)})});
+  if(r.ok){$('t').value='';$('a').value='';load()}else alert('فشلت الإضافة ('+r.status+'): '+await r.text());
+}
+async function del(id){
+  if(!confirm('حذف هذا المصروف؟'))return;
+  const r=await fetch(U+'/rest/v1/expenses?id=eq.'+encodeURIComponent(id),{method:'DELETE',headers:H()});
+  r.ok?load():alert('فشل الحذف ('+r.status+')');
+}
+async function exp(){
+  const r=await fetch(U+'/rest/v1/expenses?select=*',{headers:H()});const d=await r.json();
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify({version:1,expenses:d},null,2)],{type:'application/json'}));
+  a.download='backup-expenses.json';a.click();
+}
+if(U&&K)load();
+</script></body></html></textarea><div class="ac2"><button class="btn s" data-copy="demo"><i data-lucide="copy"></i>نسخ كود البرنامج</button></div><p class="note">ليش الفاحص داخل الملف وليس هنا؟ لأن هذي الصفحة تمنع الاتصال بمواقع خارجية، أما ملف على جهازك فما عنده هالقيد.</p></div>
+<div class="card"><span class="tag">الخطوة 4</span><h3 style="margin:8px 0 12px">افهم نتيجة الفاحص</h3><table class="tb" style="width:100%"><tr><th>الرسالة</th><th>المعنى</th><th>الحل</th></tr><tr><td>متصل والجدول موجود</td><td>كل شي تمام</td><td>جرّب إضافة مصروف</td></tr><tr><td>رفض الوصول (401)</td><td>المفتاح غلط أو ناقص</td><td>انسخه كاملاً من Project Settings › API</td></tr><tr><td>الجدول غير موجود (404)</td><td>ما شغّلت ملف SQL</td><td>ارجع للخطوة 1</td></tr><tr><td>Failed to fetch</td><td>الرابط غلط أو ما في إنترنت</td><td>تأكد من الرابط</td></tr><tr><td>القائمة فارغة بعد الإضافة</td><td>سياسة القراءة ناقصة</td><td>أعد تشغيل السياسات في الخطوة 1</td></tr></table></div></section>
+<section class="view" id="v-path"><div class="pl"><div class="tl" id="tl"></div><div class="card td" id="td"></div><aside class="rp" id="rp"></aside></div></section>
+<section class="view" id="v-learn"><div class="sub"><button data-sub="terms">الفرق بين الأربعة</button><button data-sub="video">شرح متحرك وقاموس</button><button data-sub="journey">مراحل المشروع</button><button data-sub="quiz">اختبر نفسك</button><button data-sub="tr">حل المشاكل</button><button data-sub="ask">اسأل الذكاء</button></div><div class="pn" id="c-terms"><h2>الفرق بين الأربعة</h2><p class="lead">كل وظيفة لها اختبارها الخاص، وما نعتبر وحدة منها بديل عن الثانية.</p><div class="grid" id="tg"></div></div><div class="pn" id="c-video"><h2>الشرح المتحرك</h2><p class="lead">أربع مفاهيم تظنها شي واحد، وهي مختلفة تماماً. شاهدها تتحرك.</p>
+<div class="card vid"><svg viewBox="0 0 760 340" aria-label="مشهد توضيحي">
+<path class="lnk" d="M130 150L330 70M430 70L600 150M130 200L345 255"/>
+<g class="nd" id="n-phone"><rect x="60" y="110" width="70" height="120" rx="14"/><ellipse cx="95" cy="170" rx="18" ry="8"/><text x="95" y="258">الهاتف</text></g>
+<g class="nd" id="n-cloud"><rect x="310" y="30" width="140" height="60" rx="30"/><text x="380" y="66">☁ السحابة</text></g>
+<g class="nd" id="n-pc"><rect x="590" y="110" width="120" height="80" rx="8"/><path d="M630 190v26h40v-26M615 216h90"/><text x="650" y="250">الحاسبة</text></g>
+<g class="nd" id="n-file"><rect x="340" y="235" width="80" height="70" rx="8"/><text x="380" y="276">ملف</text><text x="380" y="326">النسخة الاحتياطية</text></g>
+<circle id="pk" r="9" cx="0" cy="0"/></svg></div>
+<div class="bar" id="bar"></div>
+<div class="card cap" id="cap" style="display:flex;justify-content:space-between;gap:20px;align-items:center"><div id="ct"></div><button class="btn" id="pp">إيقاف مؤقت</button></div>
+<h2 style="margin-top:30px">القاموس السريع</h2><div id="gl"></div></div><div class="pn" id="c-journey"><h2>رحلة المشروع</h2><p class="lead">ست مراحل. اضغط على أي مرحلة لتشوف شنو يصير فيها.</p><div class="stage" id="st"></div><div class="card" id="sd"></div><div class="pn" id="c-quiz"><h2>اختبر فهمك</h2><p class="lead">أسئلة سريعة تثبّت الفكرة. اختر الجواب وشوف التفسير فوراً.</p><div id="qz"></div><div class="pn" id="c-tr"><h2>حل المشاكل الشائعة</h2><p class="lead">طلع لك خطأ؟ دوّر على رسالته هنا.</p><div id="tbl"></div></div><div class="pn" id="c-ask"><h2>اسأل الذكاء عن أي شي</h2><p class="lead">اكتب الموضوع اللي ما فهمته، ونجهّز لك برومت مفصلاً تلصقه في Claude ليشرحه من الصفر بأمثلة ورسوم ومصادر.</p><div class="card" style="max-width:640px"><label>الموضوع</label><input type="text" id="ax" placeholder="مثال: شنو الفرق بين PostgreSQL وSQLite؟"><button class="btn" id="axb"><i data-lucide="sparkles"></i>جهّز البرومت</button></div></div></div></section>
+<section class="view" id="v-ai"><h2>المساعد الذكي</h2><p class="lead">انسخ «شخصية المساعد» والصقها أول رسالة في Claude. بعدها أرسل رسالة البداية اللي تجهزها من النموذج.</p>
+<div class="two"><div><div class="card"><h3>1 · شخصية المساعد</h3><textarea id="pr" readonly></textarea><button class="btn" data-copy="pr"><i data-lucide="copy"></i>نسخ المساعد</button></div></div>
+<div class="card"><h3>2 · رسالة البداية</h3><label>اسم البرنامج</label><input type="text" id="f1" placeholder="مثال: برنامج المخزن"><label>شنو عندك منه؟</label><select id="f2"><option>ملف HTML واحد</option><option>مجلد مشروع</option><option>ملف APK فقط</option><option>رابط GitHub</option><option>فكرة فقط</option></select><label>وين تريد تشغله؟</label><select id="f3"><option>Android</option><option>Windows</option><option>Android وWindows</option><option>ما أدري</option></select><label>بياناته مهمة؟</label><select id="f4"><option>نعم، لا أريد خسارتها</option><option>لا، يمكن إعادة إنشائها</option><option>ما أدري</option></select><textarea id="ms" readonly style="min-height:120px"></textarea><button class="btn" data-copy="ms"><i data-lucide="copy"></i>نسخ الرسالة</button></div></div><hr><h2>مكتبة البرومتات</h2><p class="lead">كل برومتات الدليل في مكان واحد. انسخ ما تحتاجه.</p><div class="grid" id="lib"></div></section>
+<section class="view" id="v-tools"><h2>أي تقنية تناسبني؟</h2><p class="lead">علّم على احتياجاتك، وتطلع لك توصية مبدئية مع السبب.</p>
+<div class="two"><div id="ck"></div><div class="card out" id="ro"></div></div><hr><h2>المتطلبات</h2><p class="lead">جهّز هذي الأشياء حسب حاجتك. الاختياري ما تحتاجه إلا إذا طلبت مزامنة سحابية.</p>
+<div class="two"><div id="rq"></div><div class="card"><h3>كيف أطبّق؟</h3><ol class="steps" style="margin-top:14px"><li><div><b>جهّز ملفاتك</b><br><span class="lead" style="font-size:14px;margin:0">اجمع ملف HTML أو المجلد كامل في مكان واحد.</span></div></li><li><div><b>انسخ المساعد</b><br><span class="lead" style="font-size:14px;margin:0">من قسم «المساعد الذكي».</span></div></li><li><div><b>افتح محادثة جديدة في Claude</b><br><span class="lead" style="font-size:14px;margin:0">الصق المساعد وأرفق ملفاتك.</span></div></li><li><div><b>أجب عن سؤال واحد كل مرة</b><br><span class="lead" style="font-size:14px;margin:0">وتأكد من نقطة التحقق قبل المتابعة.</span></div></li></ol></div></div></section>
+</main>
+<div id="md"><div class="card mc"><h3 id="mt"></h3><ol class="steps" style="margin:14px 0"><li><div>اضغط «نسخ البرومت».</div></li><li><div>افتح محادثة جديدة في Claude (زر «افتح Claude»). إذا الخطوة تحتاج ملفاً، اضغط زر الإرفاق (مشبك الورق) وارفع ملف برنامجك.</div></li><li><div>الصق البرومت (Ctrl+V) واضغط إرسال، ثم ارجع هنا وعلّم الخطوة.</div></li></ol><div id="mqw" style="display:none"><label>ما الذي لم تفهمه تحديداً؟ (اختياري، والبرومت يتحدّث مباشرة)</label><input type="text" id="mq" placeholder="مثال: ما فهمت ليش نحتاج مفتاحاً أساسياً"><div class="ac2" style="margin:-6px 0 12px"><button class="btn o chp" data-ch="اشرحها بتشبيه أبسط من الحياة اليومية">تشبيه أبسط</button><button class="btn o chp" data-ch="اشرحها بمثال عملي كامل خطوة بخطوة">مثال عملي</button><button class="btn o chp" data-ch="قسّم الشرح لخطوات أصغر وأبطأ">خطوات أصغر</button></div></div><textarea id="mp" readonly style="min-height:200px"></textarea><div class="ac2"><button class="btn" data-copy="mp"><i data-lucide="copy"></i>نسخ البرومت</button><a class="btn o" href="https://claude.ai/new" target="_blank" rel="noopener"><i data-lucide="external-link"></i>افتح Claude</a><button class="btn o" id="mx">إغلاق</button></div></div></div>
+<div class="ov" id="cp"><div class="pal"><div class="pi"><i data-lucide="search"></i><input type="text" id="cq" placeholder="ابحث عن خطوة أو مصطلح أو خطأ…" autocomplete="off"></div><div id="cr"></div><div class="ph">↑ ↓ للتنقل · Enter للفتح · Esc للإغلاق</div></div></div>
+<div class="ov" id="se"><div class="card mc"><div class="sh2"><h3>الإعدادات</h3><button class="ib" id="sx"><i data-lucide="x"></i></button></div><label>اسم برنامجك (يدخل في البرومتات)</label><input type="text" id="pjn" placeholder="مثال: برنامج المصاريف"><label>لون التطبيق</label><div class="sws" id="sws"></div><label>حجم الخط</label><div><div class="seg" id="zs"><button data-z="0.92">صغير</button><button data-z="1">عادي</button><button data-z="1.12">كبير</button></div></div><label>التقدّم</label><div class="ac2" style="margin:6px 0 16px"><button class="btn o" id="cps"><i data-lucide="clipboard-copy"></i>نسخ ملخص تقدّمي</button><button class="btn o" id="pbe"><i data-lucide="download"></i>تصدير تقدّمي</button><button class="btn o" id="pbr"><i data-lucide="upload"></i>استعادة</button><button class="btn o" id="rst"><i data-lucide="trash-2"></i>إعادة ضبط التقدّم</button></div><textarea id="pbt" spellcheck="false" placeholder="هنا يظهر نص نسخة تقدّمك، أو الصق نسخة سابقة لاستعادتها…" style="min-height:80px;font-size:12px;direction:ltr;margin:0 0 6px"></textarea><p id="pbm" class="qe"></p><label>اختصارات لوحة المفاتيح</label><div class="ks"><span><kbd>Ctrl</kbd><kbd>K</kbd> بحث</span><span><kbd>→</kbd><kbd>←</kbd> السابق / التالي</span><span><kbd>D</kbd> تمّت الخطوة</span><span><kbd>1</kbd>–<kbd>6</kbd> الأقسام</span><span><kbd>?</kbd> الإعدادات</span><span><kbd>Esc</kbd> إغلاق</span></div></div></div>
+<div id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+let u=0;
+const logo=(c)=>{const i='g'+(u++);return `<svg viewBox="0 0 64 64" class="${c||''}"><defs><linearGradient id="${i}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#23a374"/><stop offset="1" stop-color="#0f5c47"/></linearGradient></defs><rect width="64" height="64" rx="18" fill="url(#${i})"/><ellipse class="sd" cx="32" cy="40" rx="11" ry="14" fill="#fff"/><path d="M32 29c-3 6-3 14 0 22" fill="none" stroke="#0f5c47" stroke-opacity=".45" stroke-width="2" stroke-linecap="round"/><path class="lf1" d="M32 27C32 20 28 16 22 15C22 21 26 26 32 27Z" fill="#ffc857"/><path class="lf2" d="M32 27C33 21 37 17 43 16C42 22 38 26 32 27Z" fill="#f2a93b"/></svg>`};
+const ic=()=>window.lucide&&lucide.createIcons();
+let snd=true;try{snd=localStorage.getItem('jsn')==='1'}catch(e){}
+let AC;function ac(){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();return AC}catch(e){}}
+['pointerdown','keydown'].forEach(v=>addEventListener(v,()=>ac(),{once:true}));
+function tn(f,d,o={}){const c=AC;if(!c||c.state!=='running')return;const s=c.createOscillator(),g=c.createGain(),x=c.currentTime+(o.at||0);s.type=o.ty||'sine';s.frequency.setValueAtTime(f,x);if(o.to)s.frequency.exponentialRampToValueAtTime(o.to,x+d);g.gain.setValueAtTime(.0001,x);g.gain.exponentialRampToValueAtTime(o.v||.04,x+.015);g.gain.exponentialRampToValueAtTime(.0001,x+d);s.connect(g);g.connect(c.destination);s.start(x);s.stop(x+d+.05)}
+const SF={click:()=>tn(520,.07,{ty:'triangle',v:.04}),nav:()=>{tn(440,.09,{ty:'triangle',v:.04});tn(660,.1,{at:.05,v:.03})},done:()=>[523,659,784,1047].forEach((f,i)=>tn(f,.28,{at:i*.07})),undo:()=>tn(400,.14,{to:260,ty:'triangle',v:.05}),copy:()=>{tn(880,.07,{v:.05});tn(1320,.1,{at:.06,v:.04})},open:()=>tn(220,.35,{to:700,ty:'sawtooth',v:.022}),welcome:()=>{tn(523,1.1,{v:.04});tn(784,1.3,{at:.18,v:.03})},win:()=>[523,659,784,1047,1319,1568].forEach((f,i)=>tn(f,.45,{at:i*.1}))};
+function sfx(n){if(!snd)return;ac();SF[n]&&SF[n]()}
+function toast(m){const x=$('#toast');x.textContent=m;x.classList.add('on');setTimeout(()=>x.classList.remove('on'),1800)}
+function burst(el,n=16){const r=el.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2,C=['#4458f0','#ffb020','#f59e0b','#10b981','#fff'];for(let i=0;i<n;i++){const s=document.createElement('i');s.className='cf';const a=Math.random()*6.28,d=60+Math.random()*(n>30?260:110);s.style.cssText=`left:${x}px;top:${y}px;background:${C[i%5]};--dx:${Math.cos(a)*d}px;--dy:${Math.sin(a)*d-40}px;--r:${Math.random()*720-360}deg`;document.body.appendChild(s);setTimeout(()=>s.remove(),1100)}}
+
+function copy(t){const done=()=>toast('تم النسخ ✓');try{navigator.clipboard.writeText(t).then(done,fb)}catch(e){fb()}function fb(){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}a.remove();done()}}
+/* video */
+const S=[{t:'1 · الحفظ المحلي',c:'البيانات تدخل ذاكرة التطبيق على جهازك وتبقى بعد الإغلاق. لكن إذا انحذف التطبيق، تروح.',n:['phone'],p:[[95,40],[95,170]]},
+{t:'2 · النسخة الاحتياطية',c:'تطلع نسخة من البيانات كملف، وتخزنه برّه التطبيق: فلاشة، درايف، أو الحاسبة.',n:['phone','file'],p:[[95,170],[380,270]]},
+{t:'3 · الاستعادة',c:'ترجّع الملف للتطبيق، وقبلها نتأكد من سلامته حتى ما يخرب بياناتك الحالية.',n:['file','phone'],p:[[380,270],[95,170]]},
+{t:'4 · المزامنة',c:'التغييرات تنتقل من الهاتف إلى السحابة ثم الحاسبة، وبالعكس. أصعب جزء: التعارضات.',n:['phone','cloud','pc'],p:[[95,170],[380,60],[650,160],[380,60],[95,170]]}];
+let cur=0,play=true,tok=0;const sl=ms=>new Promise(r=>setTimeout(r,ms));
+$('#bar').innerHTML=S.map((s,i)=>`<i data-i="${i}"></i>`).join('');
+$('#bar').onclick=e=>{if(e.target.dataset.i!=null){play=true;$('#pp').textContent='إيقاف مؤقت';run(+e.target.dataset.i)}};
+$('#pp').onclick=()=>{if(play){play=false;tok++;$('#pp').textContent='تشغيل'}else{play=true;$('#pp').textContent='إيقاف مؤقت';run(cur)}};
+function stop(){tok++}
+async function run(i){const my=++tok,s=S[i],pk=$('#pk'),mv=q=>pk.style.transform=`translate(${q[0]}px,${q[1]}px)`;cur=i;
+$$('#bar i').forEach((b,k)=>b.classList.toggle('on',k<=i));$('#ct').innerHTML=`<b>${s.t}</b><p class="lead" style="margin:4px 0 0;font-size:16px">${s.c}</p>`;
+['phone','cloud','pc','file'].forEach(n=>$('#n-'+n).classList.toggle('on',s.n.includes(n)));
+pk.style.transition='none';mv(s.p[0]);await sl(80);pk.style.transition='';
+for(const q of s.p.slice(1)){if(my!==tok)return;mv(q);await sl(1300)}
+await sl(1200);if(my===tok&&play)run((i+1)%S.length)}
+/* glossary */
+$('#gl').innerHTML=[['HTML','ملف صفحة ويب. أبسط شكل لبرنامجك، يفتح في أي متصفح.'],['APK','ملف تثبيت تطبيق Android. إذا عندك APK فقط، تعديلك عليه محدود مقارنة بملفات المصدر.'],['EXE','ملف تشغيل برنامج على Windows.'],['PWA','موقع يتثبت كأنه تطبيق ويشتغل بدون إنترنت.'],['WebView','نافذة داخل التطبيق تعرض صفحة ويب. هذا اللي تسويه خدمات مثل WebIntoApp.'],['IndexedDB','مخزن بيانات داخل المتصفح، أقوى من localStorage.'],['API','باب يتكلم منه البرنامج مع خدمة ثانية.']].map(g=>`<details><summary>${g[0]}</summary><p>${g[1]}</p></details>`).join('');
+/* terms */
+$('#tg').innerHTML=[['database','الحفظ المحلي','Local Storage','تبقى بياناتك على نفس الجهاز بعد إغلاق البرنامج.','ظهورها بعد الإغلاق لا يعني أنها محمية من الحذف.'],['hard-drive-download','النسخة الاحتياطية','Backup','ملف تنزّله وتحفظه خارج التطبيق.','وجود زر «تصدير» لا يثبت أن النسخة سليمة.'],['rotate-ccw','الاستعادة','Restore','تستورد النسخة وترجّع البيانات.','لازم نفحص الملف قبل ما نبدّل بياناتك.'],['refresh-cw','المزامنة','Sync','نقل التغييرات بين الأجهزة عبر خادم.','الاتصال بقاعدة بيانات لا يعني أن المزامنة آمنة.']].map(t=>`<div class="card h"><div class="ico"><i data-lucide="${t[0]}"></i></div><h3>${t[1]}</h3><span class="tag">${t[2]}</span><p style="margin-top:8px">${t[3]}</p><p class="warn">⚠ ${t[4]}</p></div>`).join('');
+/* journey */
+const J=[['فهم المشروع','نعرف شنو عندك وشنو المطلوب.','ترفع ملفاتك وتجاوب عن أهم الأسئلة.','ملخص: ما فهمناه وما لم نتأكد منه.'],['حماية البيانات','نضمن ما يضيع شي قبل أي تعديل.','تنزّل نسخة من بياناتك المهمة.','نسخة آمنة محفوظة خارج التطبيق.'],['تصميم الحل','نختار التقنية الأنسب.','توافق على التوصية بعد المقارنة.','خطة واضحة مع المميزات والعيوب.'],['التنفيذ','نشتغل بأقسام صغيرة.','تجرّب كل قسم قبل الانتقال للتالي.','كود مكتوب ومُراجع قسماً بقسم.'],['الاختبار','نتأكد أن كل شي يشتغل فعلاً.','تجرّب على هاتفك وحاسبتك.','قائمة اختبار بنتائج حقيقية.'],['التسليم','نجهّز الملفات النهائية.','تثبّت وتجرّب التحديث بدون فقدان بيانات.','APK أو EXE أو ملفات مع التعليمات.']];
+$('#st').innerHTML=J.map((j,i)=>`<button data-j="${i}"><b>${i+1}</b>${j[0]}</button>`).join('');
+const sj=i=>{$$('#st button').forEach((b,k)=>b.classList.toggle('on',k===i));const j=J[i];$('#sd').innerHTML=`<h3>${j[0]}</h3><p class="lead" style="margin:6px 0 14px">${j[1]}</p><div class="grid"><div><b>دورك أنت</b><p>${j[2]}</p></div><div><b>الناتج</b><p>${j[3]}</p></div></div>`};
+$('#st').onclick=e=>{const b=e.target.closest('button');if(b)sj(+b.dataset.j)};sj(0);
+/* tech */
+const N=[['off','يشتغل بدون إنترنت'],['sync','أريد مزامنة بين الأجهزة'],['and','أريده على Android'],['win','أريده على Windows'],['imp','بياناتي مهمة'],['usr','أكثر من مستخدم/حساب']];
+$('#ck').innerHTML=N.map(n=>`<label class="chk"><input type="checkbox" value="${n[0]}">${n[1]}</label>`).join('');
+function rec(){const c=$$('#ck input:checked').map(x=>x.value),h=c.includes.bind(c),o=['<li><b>الأساس:</b> HTML + JavaScript مع تخزين محلي IndexedDB. أبسط حل وأقل تكلفة.</li>'];
+if(h('and'))o.push('<li><b>Android:</b> WebIntoApp للسرعة، أو Capacitor إذا تحتاج صلاحيات الجهاز.</li>');
+if(h('win'))o.push('<li><b>Windows:</b> Electron لتطبيق مستقل، أو PWA إذا يكفيك تثبيت من المتصفح.</li>');
+if(h('imp'))o.push('<li><b>النسخ الاحتياطي:</b> تصدير JSON برقم إصدار مع تحقق قبل الاستيراد. نبنيه ونجرّبه قبل أي ميزة ثانية.</li>');
+if(h('sync')||h('usr'))o.push('<li><b>السحابة:</b> Supabase أو Firebase مع تسجيل دخول وسياسات وصول، حتى كل مستخدم يشوف بياناته فقط. تحقق من الأسعار الحالية قبل الاعتماد.</li>');
+if(h('sync')&&h('off'))o.push('<li><b>Offline-First:</b> تحفظ محلياً أولاً ثم تزامن لاحقاً. نحدد من الأول كيف نعالج التعارضات وعمليات الحذف.</li>');
+if(!h('sync')&&!h('usr'))o.push('<li class="tag" style="display:block">بدون مزامنة أو حسابات تبقى بسيطة وأكثر خصوصية.</li>');
+$('#ro').innerHTML='<h3>التوصية المبدئية</h3><ul style="padding:0;margin-top:10px">'+o.join('')+'</ul><p class="warn">هذي توصية مبدئية، والقرار النهائي بعد فحص ملفاتك.</p>'}
+$('#ck').onchange=rec;rec();
+/* requirements */
+const R=[['ملفات البرنامج (HTML أو المجلد)'],['حساب Claude للمحادثة مع المساعد'],['هاتف Android للاختبار'],['حاسبة Windows للاختبار'],['مكان لحفظ النسخ الاحتياطية (فلاشة أو درايف)'],['حساب GitHub (اختياري)'],['حساب Supabase أو Firebase (اختياري، للمزامنة)']];
+$('#rq').innerHTML=R.map((r,i)=>`<label class="chk"><input type="checkbox">${r[0]}</label>`).join('');
+/* AI */
+const P=`أنت «جسر»، مساعدي التقني لتطوير برامجي وتحويلها إلى تطبيقات Android وWindows مع حفظ بياناتي.
+دورك: مستشار تقني ومهندس برمجيات ومحلل أنظمة. تعاملني كمستخدم غير خبير؛ اشرح بعربية واضحة (يفضّل لهجة عراقية بسيطة) واذكر المصطلح الإنجليزي ثم معناه.
+
+طريقة العمل:
+1) افهم أولاً: اسألني سؤالاً واحداً في كل مرة عن أهم معلومة ناقصة. لا تبدأ بالكود قبل فهم المشروع.
+2) كل برنامج مشروع مستقل؛ لا تنقل حلولاً بين المشاريع قبل التأكد.
+3) افحص ملفاتي قبل اقتراح إعادة الكتابة، وفضّل الإصلاح التدريجي.
+4) فرّق بين: الحفظ المحلي، النسخ الاحتياطي، الاستعادة، المزامنة. لا تعتبر زر «تصدير» دليلاً على نسخة سليمة.
+5) لا تحذف ولا تستبدل شيئاً قبل التأكد من نسخة آمنة لبياناتي.
+6) قارن الخيارات (HTML+IndexedDB، PWA، WebIntoApp، Capacitor، Electron، Supabase/Firebase) بالسهولة والتكلفة والخصوصية والعمل دون إنترنت، ثم أوصِ بحل واحد مع عيوبه.
+7) الأمان: لا مفاتيح سرية في الواجهة، فعّل سياسات الوصول، ولا تطلب كلمات مروري.
+8) المراحل: فهم ← حماية البيانات ← تصميم الحل ← تنفيذ بأقسام صغيرة ← اختبار ← تسليم.
+9) الدقة: لا تدّعِ أن شيئاً اكتمل أو اختُبر ما لم يحدث فعلاً. استخدم الحالات: لم يُنفّذ / كود غير مختبر / نجح بتجربة / يحتاج إجراءً مني.
+10) أعطني خطوات أطبقها بنفسي مع نقاط تحقق، وملخصاً دورياً: الهدف، الملفات، القرارات، المرحلة، ما أُنجز، الخطوة التالية.
+
+ابدأ بتأكيد فهمك باختصار، ثم اسألني: ما البرنامج الذي نبدأ به وما الذي أملكه منه؟`;
+$('#pr').value=P;
+const mk=()=>{$('#ms').value=`برنامجي: ${$('#f1').value||'(بدون اسم بعد)'}\nالموجود عندي: ${$('#f2').value}\nأريد تشغيله على: ${$('#f3').value}\nأهمية البيانات: ${$('#f4').value}\n\nافحص ما أرفقته أولاً، وقل لي ما فهمته وما لم تتأكد منه، ثم اسألني أهم سؤال ناقص.`};
+$('#v-ai').oninput=mk;mk();
+
+const GS=[
+{t:'جهّز ملف برنامجك',w:'قبل أي شي، اجمع برنامجك في مكان واحد وخذ نسخة أصلية، حتى لو خربنا شي نرجع لها.',s:['افتح المكان اللي خزّنت بي برنامجك (ملف HTML أو مجلد كامل).','سوِّ نسخة منه: كليك يمين ← نسخ ← لصق، وسمّها «برنامجي-أصلي».','إذا فيه صور أو ملفات ثانية، خلّيها بنفس المجلد.','إذا عندك بيانات مهمة داخل البرنامج، صدّرها أو صوّرها قبل أي تعديل.'],f:['ملف برنامجك','مجلد واحد','نسخة أصلية'],q:'ملفات ومجلدات ويندوز للمبتدئين',tip:'لا تعدّل على الأصل أبداً؛ اشتغل دائماً على النسخة.'},
+{t:'افهم شنو قاعدة البيانات',w:'قاعدة البيانات مثل ملف إكسل كبير: جداول (Tables)، وكل جدول أعمدة (Columns) وصفوف (Rows). برنامجك يخزّن بي معلوماته حتى ما تضيع.',s:['الجدول = قائمة وحدة، مثلاً «الزبائن».','العمود = نوع معلومة: الاسم، الهاتف، التاريخ.','الصف = سجل واحد: زبون واحد بكل معلوماته.','ملف SQL = ورقة أوامر تقول للقاعدة: سوّي هذا الجدول بهذي الأعمدة.'],f:['برنامجك','جدول وأعمدة','بيانات محفوظة'],q:'قواعد البيانات للمبتدئين شرح عربي',ex:1},
+{t:'خلّي Claude يصمم الجداول',w:'Claude يقرأ برنامجك ويعرف شنو يخزّن، ويقترح الجداول قبل ما يكتب أي SQL. أنت توافق أو تعدّل.',s:['اضغط «الاستعانة بالمساعد الذكي» بالأسفل وانسخ البرومت.','افتح محادثة جديدة في claude.ai.','اضغط زر الإرفاق (مشبك الورق) وارفع ملف برنامجك.','الصق البرومت وأرسل، وراجع الجداول المقترحة.'],f:['ملف برنامجك','Claude','تصميم الجداول'],q:'رفع ملف في Claude شرح عربي',p:`أرفقت لك ملف برنامجي. اقرأه وحدد البيانات التي يخزنها (مثل الأسماء والتواريخ والمبالغ والإعدادات).
+اقترح تصميماً مبسطاً لقاعدة بيانات: أسماء الجداول والأعمدة ونوع كل عمود، مع شرح كل جدول بجملة بسيطة بلهجة عراقية.
+لا تكتب SQL بعد. اسألني إن كان هناك شيء غير واضح، ثم انتظر موافقتي.
+أنا مبتدئ، فاشرح المصطلحات.`},
+{t:'احصل على ملف SQL',w:'ملف SQL ملف نصي عادي ينتهي بـ ‎.sql‎. ما تحتاج تجيبه من مكان؛ Claude يكتبه لك بعد ما توافق على الجداول.',s:['بعد موافقتك على الجداول، الصق البرومت.','إذا أعطاك الكود داخل المحادثة: انسخه والصقه في Notepad، واحفظه باسم schema.sql مع اختيار «All files».','إذا أنشأ لك ملفاً جاهزاً: نزّله مباشرة.','لا تنفّذه بعد؛ نراجعه بالخطوة القادمة.'],f:['الجداول المعتمدة','Claude','ملف schema.sql'],q:'ملف SQL ما هو وكيف أنشئه شرح عربي',tip:'تأكد أن اسم الملف ينتهي بـ .sql وليس .sql.txt.',p:`ممتاز، اعتمدت التصميم. اكتب لي الآن ملف SQL كامل لقاعدة بيانات PostgreSQL (لـ Supabase) ينشئ الجداول، ويستخدم IF NOT EXISTS، ويضيف عمود id وتاريخ الإنشاء لكل جدول.
+أنشئه كملف قابل للتنزيل باسم schema.sql إن أمكن، أو ضعه في كتلة كود واحدة.
+اشرح لي سطراً بسطر ماذا يفعل. لا تضع أي كلمات مرور أو مفاتيح.`},
+{t:'أنشئ مشروع Supabase',w:'Supabase موقع يستضيف قاعدة بياناتك على الإنترنت. تحتاج حساباً، وتحقق من حدود الخطة المجانية الحالية في الموقع قبل الاعتماد عليها.',s:['افتح supabase.com واضغط Start your project.','سجّل بحساب GitHub أو ببريدك.','اضغط New project، اكتب اسم المشروع، واختر أقرب منطقة (Region).','اكتب كلمة مرور قاعدة البيانات واحفظها بمكان آمن، ولا ترسلها لأحد.','انتظر دقيقة أو دقيقتين لين يجهز المشروع.'],f:['حسابك','مشروع جديد','قاعدة جاهزة'],q:'شرح Supabase بالعربي انشاء مشروع',l:['افتح Supabase','https://supabase.com/'],p:`أنا أنشئ مشروع Supabase لأول مرة. سأرسل لك لقطات شاشة؛ حلّل ما يظهر فيها وقل لي الخطوة التالية بالضبط: ماذا أضغط وماذا أكتب. لا تطلب مني نشر كلمات المرور.`},
+{t:'شغّل ملف SQL',w:'هنا تتحول الأوامر إلى جداول حقيقية داخل مشروعك.',s:['من القائمة اليسرى افتح SQL Editor.','اضغط New query.','الصق محتوى ملف .sql كله.','اضغط Run (أو Ctrl+Enter).','إذا ظهر Success افتح Table Editor وتأكد من ظهور الجداول.'],f:['ملف schema.sql','SQL Editor','جداول حقيقية'],q:'Supabase SQL Editor شرح عربي',tip:'إذا ظهر خطأ أحمر، صوّره وأرسله لـ Claude بدل ما تعدّل بنفسك.',p:`نفّذت ملف SQL في Supabase وظهرت لي هذه النتيجة (سأرفق صورة الشاشة). فسّر لي ما حدث، وإن كان فيه خطأ فاشرح سببه وأعطني نسخة مصححة من الأمر المتأثر فقط.`},
+{t:'فعّل الحماية (RLS)',w:'بدون حماية (Row Level Security) ممكن أي شخص يقرأ بياناتك. نفعّلها ونحدد من يشوف شنو.',s:['افتح Table Editor واختر جدولاً.','اضغط Enable RLS إذا كان غير مفعّل.','اطلب من Claude سياسات (Policies) تناسب برنامجك.','جرّب أن مستخدماً آخر لا يرى بياناتك.'],f:['جدولك','قفل RLS','سياسات الوصول'],q:'Supabase RLS شرح عربي',p:`اكتب لي سياسات Row Level Security لجداولي في Supabase بحيث كل مستخدم يقرأ ويعدل بياناته فقط. اشرح كل سياسة بجملة، وبيّن لي كيف أتأكد أنها تعمل. لا تستخدم مفتاح service_role في أي كود للواجهة.`},
+{t:'اربط برنامجك بالقاعدة',w:'تحتاج رابط المشروع (Project URL) والمفتاح العام (anon) فقط. المفتاح السري service_role ممنوع تضعه داخل البرنامج.',s:['من Project Settings ← API انسخ Project URL والمفتاح العام anon.','لا تنسخ service_role أبداً داخل ملفك.','اطلب من Claude يعدّل برنامجك ليحفظ ويقرأ من Supabase.','ضع الرابط والمفتاح العام فقط في مكانهما داخل الملف.'],f:['برنامجك','المفتاح العام','Supabase'],q:'ربط Supabase مع HTML JavaScript شرح عربي',tip:'لا ترسل المفاتيح السرية في المحادثة.',p:`عدّل برنامجي المرفق ليحفظ بياناته ويقرأها من Supabase بدل التخزين المحلي، دون حذف أي ميزة تعمل. استخدم placeholders مثل YOUR_SUPABASE_URL وYOUR_ANON_KEY وسأضع القيم بنفسي. اشرح كل تغيير، وأخبرني بوضوح ما الذي لم تختبره.`},
+{t:'اختبر كل شي',w:'ما نعتبر الشغل خلص لمجرد وجود كود. نجرّب فعلياً.',s:['أضف سجلاً جديداً داخل البرنامج.','أغلق البرنامج وافتحه: هل بقي السجل؟','افتحه من جهاز ثاني: هل يظهر؟','اقطع الإنترنت وجرّب الحفظ: شنو الرسالة؟','افتح Table Editor وتأكد أن الصف موجود فعلاً.'],f:['أضف سجل','أغلق وافتح','يظهر بجهاز ثاني'],q:'اختبار التطبيق للمبتدئين شرح',p:`ساعدني أصمم قائمة اختبار لبرنامجي بعد ربطه بـ Supabase: الحفظ، الإغلاق وإعادة الفتح، جهازين، انقطاع الإنترنت، والحذف. اكتب كل اختبار كخطوات أطبقها وماذا أتوقع أن أرى.`},
+{t:'نسخة احتياطية',w:'حتى مع قاعدة سحابية، لازم تكون عندك نسخة بيدك.',s:['من Supabase افتح Database ← Backups وراجع ما يتوفر في خطتك.','اطلب من Claude زر «تصدير» يحفظ ملف JSON.','حمّل النسخة واحفظها خارج الجهاز.','جرّب الاستعادة على بيانات تجريبية قبل ما تعتمد عليها.'],f:['بياناتك','ملف JSON','مكان خارجي'],q:'النسخ الاحتياطي لقاعدة البيانات شرح عربي',p:`أضف لبرنامجي ميزة نسخ احتياطي: زر تصدير يحفظ كل البيانات في ملف JSON برقم إصدار، وزر استعادة يتحقق من الملف قبل الاستيراد ولا يستبدل البيانات الحالية قبل تأكيدي. اشرح لي كيف أجربها.`}];
+function flow(f){const W=f.length*200;let o=`<svg viewBox="0 0 ${W} 90" class="fl">`;f.forEach((x,i)=>{const X=W-170-i*200;o+=`<g class="fb${i==f.length-1?' l':''}"><rect x="${X}" y="17" width="150" height="56" rx="14"/><text x="${X+75}" y="51">${x}</text></g>`;if(i<f.length-1)o+=`<path class="ar" d="M${X-8} 45H${X-42}M${X-30} 37l-12 8 12 8"/>`});return o+`<circle r="6" cy="45" fill="#f59e0b"><animate attributeName="cx" from="${W-20}" to="20" dur="3.2s" repeatCount="indefinite"/></circle></svg>`}
+const yt=q=>'https://www.youtube.com/results?search_query='+encodeURIComponent(q);
+const EG=['عندك expenses.html (برنامج مصاريف) على سطح المكتب. تسوي نسخة اسمها expenses-original.html وتخليها جانباً.','برنامج المصاريف يخزّن: البند والمبلغ والتاريخ. كل مصروف = صف واحد.','تكتب لـ Claude: هذا برنامج مصاريفي. يرد عليك: جدول expenses بأعمدة title وamount وspent_on.','يعطيك ملف schema.sql، وأول سطر فيه create table.','تسمّي المشروع expenses-app وتختار أقرب منطقة لك.','تلصق الكود وتضغط Run، فتشوف: Success. No rows returned.','تفعّل RLS وتطلب سياسة: كل مستخدم يشوف مصاريفه فقط.','تنسخ الرابط والمفتاح العام فقط، وتحطهم مكان YOUR_SUPABASE_URL وYOUR_ANON_KEY.','تضيف مصروف «خبز 3000»، تسكّر وتفتح، وتشوفه من الهاتف والحاسبة.','تضغط تصدير فينزل ملف backup.json، وتخزنه بالفلاشة.'];
+const mw=(h,b)=>`<div class="mw"><div class="mt"><i></i><i></i><i></i><span>${h}</span></div><div class="mb">${b.replace(/<div class="cd">([\s\S]*?)<\/div>/g,(m,c)=>'<div class="cd">'+bd(c)+'</div>')}</div></div>`;
+const MK=[()=>mw('سطح المكتب › برنامجي',`<div class="fl2"><span><i data-lucide="file-code"></i>expenses.html</span><span class="o"><i data-lucide="file-code"></i>expenses-original.html<small>نسخة أصلية</small></span></div>`),
+()=>mw('جدول expenses',`<table class="tb"><tr><th>id</th><th>البند</th><th>المبلغ</th><th>التاريخ</th></tr><tr><td>1</td><td>خبز</td><td>3000</td><td>10/25</td></tr><tr><td>2</td><td>كهرباء</td><td>25000</td><td>10/24</td></tr></table>`),
+()=>mw('Claude',`<div class="bu me">أرفقت برنامجي، صمّم لي قاعدة بياناته<span class="chip"><i data-lucide="paperclip"></i>expenses.html</span></div><div class="bu ai">اقتراحي: جدول <b>expenses</b> فيه title (نص) وamount (رقم) وspent_on (تاريخ). موافق؟</div>`),
+()=>mw('schema.sql',`<div class="cd">create table if not exists expenses (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  amount numeric not null,
+  spent_on date,
+  created_at timestamptz default now()
+);</div>`),
+()=>mw('New project',`<div class="fm"><label>Name</label><div class="ip">expenses-app</div><label>Database Password</label><div class="ip">••••••••••</div><label>Region</label><div class="ip">أقرب منطقة لك</div><span class="bt">Create new project</span></div>`),
+()=>mw('SQL Editor',`<div class="cd">create table if not exists expenses (...);</div><div class="rn"><span class="bt">Run</span><span class="ok">Success. No rows returned</span></div>`),
+()=>mw('Table Editor › expenses',`<div class="lk"><i data-lucide="lock"></i><div><b>RLS enabled</b><small>كل مستخدم يشوف مصاريفه فقط</small></div></div>`),
+()=>mw('Project Settings › API',`<div class="ky good"><i data-lucide="circle-check"></i><div><b>anon / public</b><small>تحطه في البرنامج</small></div></div><div class="ky bad"><i data-lucide="circle-x"></i><div><b>service_role</b><small>ممنوع، هذا سري</small></div></div>`),
+()=>mw('اختبار على جهازين',`<div class="dv"><span><i data-lucide="smartphone"></i><br>الهاتف<br><small>خبز 3000</small></span><i data-lucide="arrow-left-right"></i><span><i data-lucide="monitor"></i><br>الحاسبة<br><small>خبز 3000</small></span></div>`),
+()=>mw('backup.json',`<div class="cd">{ "version": 1,
+  "expenses": [
+    { "title": "خبز", "amount": 3000 }
+  ] }</div>`)];
+
+let dn=[],cs=0;try{dn=JSON.parse(localStorage.getItem('jd')||'[]')}catch(e){}
+const sv=()=>{try{localStorage.setItem('jd',JSON.stringify(dn))}catch(e){}};
+function pth(){const g=GS[cs],n=GS.length,d=dn.includes(cs);
+$('#tl').innerHTML=GS.map((s,i)=>`<button class="ti${i==cs?' on':''}${dn.includes(i)?' dn':''}" data-s="${i}"><span class="tn">${dn.includes(i)?'✓':i+1}</span><span>${s.t}</span></button>`).join('');
+$('#td').innerHTML=`<span class="tag">الخطوة ${cs+1} من ${n}</span><h2 style="margin-top:8px">${g.t}</h2><div class="dc"><div><p class="lead" style="margin-top:0">${g.w}</p><ol class="steps">${g.s.map(x=>`<li><div>${x}</div></li>`).join('')}</ol>${g.tip?`<p class="tp">${g.tip}</p>`:''}</div><div class="c2">${MK[cs]()}${flow(g.f)}<p class="eg"><b>مثال:</b> ${EG[cs]}</p></div></div><div class="df"><div class="ac2">${g.p?`<button class="btn s" data-ai><i data-lucide="sparkles"></i>الاستعانة بالمساعد</button>`:''}<a class="btn o" target="_blank" rel="noopener" href="${yt(g.q)}"><i data-lucide="circle-play"></i>فيديوهات عربية</a>${g.l?`<a class="btn o" target="_blank" rel="noopener" href="${g.l[1]}"><i data-lucide="external-link"></i>${g.l[0]}</a>`:''}</div><div class="ac2"><button class="btn o" data-pv ${cs?'':'disabled'}><i data-lucide="arrow-right"></i>السابق</button><button class="btn" data-fin><i data-lucide="${d?'rotate-ccw':'check'}"></i>${d?'إلغاء الإتمام':'تمّت الخطوة'}</button></div></div>`;
+$('#pp2').style.setProperty('--p',Math.round(dn.length/n*100));$('#pq').textContent=dn.length+'/'+n;
+const nx=GS.findIndex((s,i)=>!dn.includes(i));$('#hb').innerHTML=`<i data-lucide="play"></i>${dn.length?'تابع من الخطوة '+(nx<0?n:nx+1):'ابدأ المسار'}`;ic()}
+function fin(){const i=cs,was=dn.includes(i);dn=was?dn.filter(k=>k!==i):[...dn,i];sv();sfx(was?'undo':'done');if(!was){burst($('[data-fin]'));if(dn.length===GS.length){sfx('win');toast('مبروك! أنهيت كل الخطوات')}else if(i<GS.length-1)cs=i+1}pth()}
+const V=[['home','house','الرئيسية'],['lec','graduation-cap','المحاضرات'],['lab','flask-conical','مختبر SQL'],['path','route','التطبيق العملي'],['demo','plug-zap','برنامج التجربة'],['learn','book-open','مراجع واختبار']];
+$('#nv').innerHTML=V.map(v=>`<button data-go="${v[0]}"><i data-lucide="${v[1]}"></i><span>${v[2]}</span></button>`).join('');
+let sub='terms';
+function sb2(k){sub=k;stop();$$('.sub button').forEach(b=>b.classList.toggle('on',b.dataset.sub===k));$$('.pn').forEach(e=>e.classList.toggle('on',e.id==='c-'+k));if(k==='video'){play=true;$('#pp').textContent='إيقاف مؤقت';run(0)}}
+function go(id){stop();$$('.view').forEach(e=>e.classList.toggle('on',e.id==='v-'+id));$$('#nv button').forEach(b=>b.classList.toggle('on',b.dataset.go===id));scrollTo({top:0,behavior:'smooth'});if(id==='learn')sb2(sub);ic()}
+document.addEventListener('click',e=>{const q=s=>e.target.closest(s);let x;
+if(x=q('[data-go]')){if(x.id==='hb'){const nx=GS.findIndex((s,i)=>!dn.includes(i));cs=nx<0?0:nx;pth()}go(x.dataset.go)}
+if(x=q('[data-sub]'))sb2(x.dataset.sub);
+if(x=q('[data-s]')){cs=+x.dataset.s;pth()}
+if(q('[data-pv]')){cs=Math.max(0,cs-1);pth()}
+if(q('[data-fin]'))fin();
+if(q('[data-ai]')){const g=GS[cs];$('#mp').value=pre()+g.p;$('#mt').textContent=g.t;$('#mqw').style.display='none';EXM=null;$('#md').classList.add('on')}
+if(x=q('[data-copy]'))copy($('#'+x.dataset.copy).value);
+if(e.target.id==='md'||q('#mx'))$('#md').classList.remove('on');
+const b=q('button,a.btn,summary,.chk');if(b&&b.id!=='sn'&&b.id!=='sk')sfx(b.closest('#nv')?'nav':b.dataset.copy?'copy':b.dataset.ai!=null?'open':'click')});
+const sbn=()=>{$('#sn').innerHTML=`<i data-lucide="${snd?'volume-2':'volume-x'}"></i>`;ic()};
+$('#sn').onclick=()=>{snd=!snd;try{localStorage.setItem('jsn',snd?'1':'0')}catch(e){}sbn();if(snd){ac();setTimeout(()=>sfx('copy'),60)}};
+$('#th').onclick=()=>{const r=document.documentElement,d=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;r.dataset.theme=d?'light':'dark'};
+const intro=$('#splash');let t1,t2;
+function enter(){if(intro.classList.contains('off'))return;clearTimeout(t1);clearTimeout(t2);try{localStorage.setItem('jv','1')}catch(e){}sfx('welcome');intro.classList.add('off')}
+function runIntro(f){clearTimeout(t1);clearTimeout(t2);let seen=false;try{seen=!f&&!!localStorage.getItem('jv')}catch(e){}if(seen){intro.classList.add('off');return}$('#sk').classList.remove('on');t1=setTimeout(()=>$('#sk').classList.add('on'),2800);t2=setTimeout(enter,15000)}
+intro.onclick=enter;addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')enter()});
+$('#ri').onclick=()=>{$('#il').innerHTML=logo('d');intro.style.display='none';intro.classList.remove('off');void intro.offsetWidth;intro.style.display='';runIntro(1)};
+$('#il').innerHTML=logo('d');$('#bl').innerHTML=logo();
+const MINS=[10,5,10,5,10,5,10,15,15,10];
+let ST={n:'',c:'#17805a',z:1},NT={};try{ST={...ST,...JSON.parse(localStorage.getItem('jst')||'{}')};NT=JSON.parse(localStorage.getItem('jnt')||'{}')}catch(e){}
+if(ST.c==='#4458f0')ST.c='#17805a';
+const saveST=()=>{try{localStorage.setItem('jst',JSON.stringify(ST))}catch(e){}};
+function pre(){return ST.n?'اسم برنامجي: '+ST.n+'\n':''}
+function applyST(){const r=document.documentElement.style;r.setProperty('--pr',ST.c);r.setProperty('--b1',ST.c);r.setProperty('--z',ST.z);$('#pjn').value=ST.n;$$('#sws button').forEach(b=>b.classList.toggle('on',b.dataset.c===ST.c));$$('#zs button').forEach(b=>b.classList.toggle('on',+b.dataset.z===ST.z));$('#pjc').textContent=ST.n?'مشروعي: '+ST.n:''}
+$('#sws').innerHTML=['#17805a','#2563eb','#7c3aed','#c2410c'].map(c=>`<button data-c="${c}" style="background:${c}"></button>`).join('');
+$('#pjn').oninput=e=>{ST.n=e.target.value;saveST();applyST()};
+function summary(){return 'ملخص تقدّمي في نواة'+(ST.n?' — '+ST.n:'')+'\n'+GS.map((g,i)=>(dn.includes(i)?'[x] ':'[ ] ')+(i+1)+'. '+g.t+(NT[i]?'\n    ملاحظة: '+NT[i]:'')).join('\n')}
+const pth0=pth;pth=function(){pth0();ext()};
+function ext(){const n=GS.length,left=GS.reduce((a,g,i)=>a+(dn.includes(i)?0:MINS[i]),0),nx=GS.findIndex((g,i)=>!dn.includes(i));
+$('#rp').innerHTML=`<div class="card"><h3><i data-lucide="clock"></i> الوقت</h3><p class="lead" style="margin:4px 0 0;font-size:15px">هذي الخطوة ≈ ${MINS[cs]} دقائق<br>المتبقي كله ≈ ${left} دقيقة</p></div><div class="card"><h3><i data-lucide="notebook-pen"></i> ملاحظاتي</h3><textarea id="nt" placeholder="اكتب ما تحتاج تتذكره: رابط، اسم مشروع، خطأ ظهر لك…">${NT[cs]||''}</textarea></div><div class="card ac2" style="flex-direction:column">${GS[cs].p?`<button class="btn s" data-qp><i data-lucide="copy"></i>انسخ البرومت مباشرة</button>`:''}<button class="btn o" data-sum><i data-lucide="clipboard-copy"></i>نسخ ملخص تقدّمي</button></div>`;
+$('#nt').oninput=e=>{NT[cs]=e.target.value;try{localStorage.setItem('jnt',JSON.stringify(NT))}catch(x){}};
+$('#hs').innerHTML=`<div class="card"><i class="rg3" style="--p:${Math.round(dn.length/n*100)}"><b>${dn.length}/${n}</b></i><div><h3>تقدّمك</h3><small>${dn.length==n?'أنهيت كل الخطوات':'تابع، أنت تتقدّم'}</small></div></div><div class="card"><div class="ico"><i data-lucide="clock"></i></div><div><h3>≈ ${left} دقيقة</h3><small>الوقت المتبقي</small></div></div><div class="card"><div class="ico"><i data-lucide="flag"></i></div><div><h3>${nx<0?'اكتمل المسار':GS[nx].t}</h3><small>الخطوة التالية</small></div></div>`;ic()}
+const TR=[['relation "expenses" does not exist','الجدول ما انخلق: ملف SQL ما اشتغل، أو اسم الجدول مختلف.','ارجع للخطوة 6 وشغّل الملف، وتأكد أن الاسم مطابق بحروف صغيرة.'],['البيانات موجودة لكن ما تظهر (أو permission denied)','RLS مفعّل بدون سياسة تسمح بالقراءة.','اطلب من Claude سياسة مناسبة (الخطوة 7).'],['Invalid API key','المفتاح غلط أو ناقص حرف.','انسخ مفتاح anon من Project Settings › API من جديد.'],['Failed to fetch','الإنترنت مقطوع، أو الرابط غلط.','تأكد من Project URL وأن الإنترنت شغال.'],['الملف انحفظ باسم schema.sql.txt','Notepad أضاف .txt للاسم.','اختر «All files» عند الحفظ، وفعّل إظهار الامتدادات.'],['syntax error at or near','جزء من الكود انقطع عند النسخ.','انسخ الملف كله من أول سطر لآخر سطر، أو أرسل الخطأ لـ Claude.'],['البيانات تظهر بالهاتف ولا تظهر بالحاسبة','غالباً دخلت بحسابين مختلفين، والسياسة تربط الصفوف بالمستخدم.','سجّل الدخول بنفس الحساب على الجهازين.']];
+$('#tbl').innerHTML=TR.map(r=>`<details><summary>${r[0]}</summary><p><b>السبب:</b> ${r[1]}<br><b>الحل:</b> ${r[2]}</p></details>`).join('');
+$('#lib').innerHTML=GS.map((g,i)=>g.p?`<div class="card"><span class="tag">خطوة ${i+1}</span><h3 style="margin:8px 0 12px">${g.t}</h3><button class="btn s" data-lib="${i}"><i data-lucide="copy"></i>نسخ البرومت</button></div>`:'').join('');
+const QZ=[['ظهرت بياناتك بعد إغلاق البرنامج وفتحه. هل يعني هذا أن لديك نسخة احتياطية؟',['نعم','لا'],1,'هذا حفظ محلي فقط. النسخة الاحتياطية ملف تحفظه خارج التطبيق.'],['أي مفتاح تضعه داخل ملف برنامجك؟',['anon (العام)','service_role (السري)'],0,'service_role صلاحياته كاملة، فلا يوضع داخل البرنامج أبداً.'],['شنو ملف SQL؟',['ملف نصي فيه أوامر لإنشاء الجداول','برنامج تثبيت','صورة'],0,'هو ورقة أوامر تقول للقاعدة: سوّي هذا الجدول بهذي الأعمدة.'],['قبل أي تعديل على برنامجك، شنو أول شي؟',['أبدأ التعديل مباشرة','أسوّي نسخة أصلية منه'],1,'النسخة الأصلية تنقذك لو خربت شي.'],['الجدول عبارة عن...',['قائمة بأعمدة وصفوف','ملف صور'],0,'مثل ورقة إكسل: الأعمدة تحدد نوع المعلومة، وكل صف سجل.']];
+let qs=0,qa=0;
+function qr(){qs=qa=0;$('#qz').innerHTML=QZ.map((q,i)=>`<div class="card qc" data-q="${i}"><b>${i+1}. ${q[0]}</b><div class="ac2" style="margin:12px 0 4px">${q[1].map((o,j)=>`<button class="btn o qo" data-j="${j}">${o}</button>`).join('')}</div><p class="qe"></p></div>`).join('')+'<p class="lead" id="qs"></p>'}
+function ans(b){const c=b.closest('.qc');if(c.dataset.d)return;c.dataset.d=1;const i=+c.dataset.q,ok=+b.dataset.j===QZ[i][2];qa++;if(ok)qs++;b.classList.add(ok?'ok2':'bad2');if(!ok)c.querySelectorAll('.qo')[QZ[i][2]].classList.add('ok2');c.querySelector('.qe').textContent=(ok?'صح! ':'مو بالضبط. ')+QZ[i][3];sfx(ok?'done':'undo');$('#qs').textContent=qa==QZ.length?'نتيجتك: '+qs+' من '+QZ.length:''}
+qr();
+let ci=[],cx=0;
+function items(){const L=(sel,k,f)=>$$(sel).map(s=>({t:s.textContent,k,f:()=>f(s)}));return[...V.map(v=>({t:v[2],k:'قسم',f:()=>go(v[0])})),...GS.map((g,i)=>({t:g.t,k:'خطوة '+(i+1),f:()=>{cs=i;pth();go('path')}})),...L('#gl summary','قاموس',s=>{go('learn');sb2('video');s.parentElement.open=true;setTimeout(()=>s.scrollIntoView({block:'center'}),60)}),...L('#tbl summary','مشكلة',s=>{go('tools');s.parentElement.open=true;setTimeout(()=>s.scrollIntoView({block:'center'}),60)}),{t:'الإعدادات',k:'إجراء',f:()=>$('#se').classList.add('on')},{t:'تبديل المظهر',k:'إجراء',f:()=>$('#th').click()}]}
+function rc(){const q=$('#cq').value.trim();ci=items().filter(o=>!q||o.t.includes(q)||o.k.includes(q)).slice(0,9);cx=Math.min(cx,Math.max(0,ci.length-1));$('#cr').innerHTML=ci.length?ci.map((o,i)=>`<button class="cr${i==cx?' on':''}" data-ci="${i}"><span>${o.t}</span><small>${o.k}</small></button>`).join(''):'<p class="lead" style="margin:16px">ما لقيت نتيجة</p>'}
+function openCP(){$('#cp').classList.add('on');$('#cq').value='';cx=0;rc();$('#cq').focus()}
+function pick(i){const o=ci[i];$('#cp').classList.remove('on');o&&o.f()}
+$('#cq').oninput=()=>{cx=0;rc()};
+document.addEventListener('click',e=>{const q=s=>e.target.closest(s);let x;
+if(q('[data-qp]'))copy(pre()+GS[cs].p);if(x=q('[data-lib]'))copy(pre()+GS[+x.dataset.lib].p);
+if(q('[data-sum]')||q('#cps'))copy(summary());
+if(q('#sq'))openCP();if(q('#sg'))$('#se').classList.add('on');
+if(q('#sx')||(e.target.classList&&e.target.classList.contains('ov')))$$('.ov.on').forEach(o=>o.classList.remove('on'));
+if(x=q('[data-ci]'))pick(+x.dataset.ci);
+if(x=q('#sws button')){ST.c=x.dataset.c;saveST();applyST()}
+if(x=q('#zs button')){ST.z=+x.dataset.z;saveST();applyST()}
+if(q('#rst')){const b=$('#rst');if(b.dataset.s){dn=[];sv();pth();b.textContent='تمت إعادة الضبط';delete b.dataset.s}else{b.dataset.s=1;b.textContent='اضغط مرة ثانية للتأكيد'}}
+if(x=q('.qo'))ans(x)});
+addEventListener('keydown',e=>{const inp=/INPUT|TEXTAREA|SELECT/.test(e.target.tagName);
+if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openCP();return}
+if(e.key==='Escape'){$$('.ov.on,#md.on').forEach(x=>x.classList.remove('on'));return}
+if($('#cp').classList.contains('on')){if(e.key==='ArrowDown'){cx=Math.min(cx+1,ci.length-1);rc();e.preventDefault()}if(e.key==='ArrowUp'){cx=Math.max(cx-1,0);rc();e.preventDefault()}if(e.key==='Enter')pick(cx);return}
+if(inp||e.ctrlKey||e.altKey||!intro.classList.contains('off'))return;const k=e.key;
+if(k==='?'||k==='؟')$('#se').classList.add('on');else if(/^[1-6]$/.test(k))go(V[k-1][0]);
+else if($('#v-path').classList.contains('on')){if(k==='ArrowLeft'&&cs<GS.length-1){cs++;pth()}else if(k==='ArrowRight'&&cs>0){cs--;pth()}else if(k.toLowerCase()==='d'||k==='ي')fin()}});
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const bd=h=>h.replace(/('[^'\n<]*[\u0600-\u06FF][^'\n<]*')/g,'<span dir="ltr" style="unicode-bidi:isolate">$1</span>');
+const DB={};
+function val(v){v=v.trim();if(/^'.*'$/s.test(v))return v.slice(1,-1);if(v!==''&&!isNaN(v))return +v;if(/^null$/i.test(v))return null;throw Error('قيمة غير مفهومة: '+v)}
+function spl(s){const r=[];let c='',q=false;for(const ch of s){if(ch==="'")q=!q;if(ch===','&&!q){r.push(c);c=''}else c+=ch}r.push(c);return r}
+function cond(w,known){const ors=w.split(/\s+or\s+/i).map(g=>g.split(/\s+and\s+/i).map(c=>{const m=c.trim().match(/^([\w.]+)\s*(>=|<=|!=|<>|=|>|<|like)\s*(.+)$/is);if(!m)throw Error('شرط غير مدعوم: '+c.trim()+'. الشكل: عمود = قيمة');if(known&&!known.includes(m[1]))throw Error('العمود غير موجود: '+m[1]);const x=val(m[3]),o=m[2].toLowerCase(),k=m[1],re=o=='like'?new RegExp('^'+String(x).replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/%/g,'.*').replace(/_/g,'.')+'$','i'):null;return r=>{const a=r[k];return o=='='?a==x:o=='!='||o=='<>'?a!=x:o=='>'?a>x:o=='<'?a<x:o=='>='?a>=x:o=='<='?a<=x:re.test(String(a))}}));return r=>ors.some(g=>g.every(f=>f(r)))}
+function wh(w,t){return w?cond(w,t.c):()=>true}
+function tb1(n){const t=DB[n.toLowerCase()];if(!t)throw Error('الجدول غير موجود: '+n);return t}
+function ex1(s){let m;
+if(m=s.match(/^create\s+table\s+(\w+)\s*\((.*)\)$/is)){const n=m[1].toLowerCase();if(DB[n])throw Error('الجدول موجود مسبقاً');DB[n]={c:spl(m[2]).map(x=>x.trim().split(/\s+/)[0]),r:[]};return{msg:'تم إنشاء الجدول '+n}}
+if(m=s.match(/^insert\s+into\s+(\w+)\s*(?:\(([^)]*)\))?\s*values\s*(.*)$/is)){const t=tb1(m[1]),cols=m[2]?m[2].split(',').map(x=>x.trim()):t.c,rows=m[3].match(/\((?:[^()']|'[^']*')*\)/g);if(!rows)throw Error('صيغة VALUES غير صحيحة');rows.forEach(r=>{const v=spl(r.slice(1,-1)).map(val);if(v.length!=cols.length)throw Error('عدد القيم لا يطابق عدد الأعمدة');const o={};t.c.forEach(c=>o[c]=null);cols.forEach((c,i)=>{if(!t.c.includes(c))throw Error('العمود غير موجود: '+c);o[c]=v[i]});t.r.push(o)});return{msg:'تمت إضافة '+rows.length+' صف'}}
+if(m=s.match(/^select\s+(.+?)\s+from\s+(\w+)(?:\s+(?:as\s+)?(?!(?:join|left|inner|where|group|order|limit)\b)(\w+))?(?:\s+(left\s+|inner\s+)?join\s+(\w+)(?:\s+(?:as\s+)?(?!on\b)(\w+))?\s+on\s+([\w.]+)\s*=\s*([\w.]+))?(?:\s+where\s+(.+?))?(?:\s+group\s+by\s+([\w.]+))?(?:\s+order\s+by\s+([\w.()*]+)(?:\s+(asc|desc))?)?(?:\s+limit\s+(\d+))?$/is)){
+const t1=tb1(m[2]),a1=(m[3]||m[2]).toLowerCase();let rows=t1.r.map(o=>{const r={};t1.c.forEach(c=>{r[c]=o[c];r[a1+'.'+c]=o[c]});return r}),keys=[...t1.c,...t1.c.map(c=>a1+'.'+c)],plain=[...t1.c];
+if(m[5]){const t2=tb1(m[5]),a2=(m[6]||m[5]).toLowerCase(),lf=/left/i.test(m[4]||''),res=[];t2.c.forEach(c=>{if(!keys.includes(c)){keys.push(c);plain.push(c)}keys.push(a2+'.'+c)});if(!keys.includes(m[7])||!keys.includes(m[8]))throw Error('عمود الربط غير موجود. اكتب الأعمدة مع اسم الجدول مثل c.id');
+for(const r1 of rows){let hit=false;for(const o of t2.r){const r={...r1};t2.c.forEach(c=>{if(!(c in r))r[c]=o[c];r[a2+'.'+c]=o[c]});if(r[m[7]]==r[m[8]]){res.push(r);hit=true}}if(lf&&!hit){const r={...r1};t2.c.forEach(c=>{if(!(c in r))r[c]=null;r[a2+'.'+c]=null});res.push(r)}}rows=res}
+if(m[9])rows=rows.filter(cond(m[9],keys));
+const sel=m[1].trim()==='*'?plain.map(c=>({e:c,n:c})):spl(m[1]).map(x=>{x=x.trim();const al=x.match(/^(.*?)\s+as\s+(\w+)$/is);return al?{e:al[1].trim(),n:al[2]}:{e:x,n:x}});
+const isA=e=>/^(count|sum|avg|min|max)\s*\(/i.test(e),anyA=sel.some(x=>isA(x.e));
+const ag=(e,rs)=>{const q=e.match(/^(count|sum|avg|min|max)\s*\(\s*(\*|[\w.]+)\s*\)$/i);if(!q)throw Error('تعبير غير مدعوم: '+e);const f=q[1].toLowerCase(),c=q[2];if(c!=='*'&&!keys.includes(c))throw Error('العمود غير موجود: '+c);const v=c==='*'?rs:rs.map(r=>r[c]).filter(z=>z!==null&&z!==undefined),S=v.reduce((a,b)=>a+Number(b),0);return f=='count'?v.length:f=='sum'?S:f=='avg'?(v.length?S/v.length:null):f=='min'?v.reduce((a,b)=>a<b?a:b,v.length?v[0]:null):v.reduce((a,b)=>a>b?a:b,v.length?v[0]:null)};
+let out;
+if(anyA||m[10]){if(m[10]&&!keys.includes(m[10]))throw Error('العمود غير موجود: '+m[10]);const G=new Map();rows.forEach(r=>{const k=m[10]?r[m[10]]:0;(G.get(k)||G.set(k,[]).get(k)).push(r)});if(!m[10]&&!G.size)G.set(0,[]);
+out=[...G.values()].map(g=>sel.map(x=>{if(isA(x.e))return ag(x.e,g);if(!m[10])throw Error('لا تخلط عموداً عادياً مع دالة تجميع بدون group by');if(!keys.includes(x.e))throw Error('العمود غير موجود: '+x.e);return g.length?g[0][x.e]:null}));
+if(m[11]){const ix=sel.findIndex(x=>x.n==m[11]||x.e==m[11]);if(ix<0)throw Error('رتّب بعمود من الأعمدة المعروضة (أو اسمه المستعار)');const d=/desc/i.test(m[12]||'')?-1:1;out.sort((a,b)=>a[ix]>b[ix]?d:a[ix]<b[ix]?-d:0)}}
+else{if(m[11]){if(!keys.includes(m[11]))throw Error('العمود غير موجود: '+m[11]);const k=m[11],d=/desc/i.test(m[12]||'')?-1:1;rows=[...rows].sort((a,b)=>a[k]>b[k]?d:a[k]<b[k]?-d:0)}sel.forEach(x=>{if(!keys.includes(x.e))throw Error('العمود غير موجود: '+x.e)});out=rows.map(r=>sel.map(x=>r[x.e]))}
+if(m[13])out=out.slice(0,+m[13]);return{cols:sel.map(x=>x.n),rows:out}}
+if(m=s.match(/^update\s+(\w+)\s+set\s+(.+?)(?:\s+where\s+(.+))?$/is)){const t=tb1(m[1]),f=wh(m[3],t),st=spl(m[2]).map(p=>{const q=p.match(/^\s*(\w+)\s*=\s*(.+)$/s);if(!q||!t.c.includes(q[1]))throw Error('جملة SET غير صحيحة');return[q[1],val(q[2])]});let n=0;t.r.forEach(r=>{if(f(r)){st.forEach(([c,v])=>r[c]=v);n++}});return{msg:'تم تعديل '+n+' صف'}}
+if(m=s.match(/^delete\s+from\s+(\w+)(?:\s+where\s+(.+))?$/is)){const t=tb1(m[1]),f=wh(m[2],t),b=t.r.length;t.r=t.r.filter(r=>!f(r));return{msg:'تم حذف '+(b-t.r.length)+' صف'}}
+if(m=s.match(/^drop\s+table\s+(\w+)$/i)){tb1(m[1]);delete DB[m[1].toLowerCase()];return{msg:'تم حذف الجدول'}}
+throw Error('أمر غير مدعوم في المختبر. المدعوم: create table, insert, select, update, delete, drop table')}
+function sqlRun(sql){const o=[];for(const raw of sql.split(';')){const s=raw.trim();if(!s)continue;try{o.push(ex1(s))}catch(e){o.push({err:e.message});break}}return o}
+function tbs(){const k=Object.keys(DB);$('#tbs').innerHTML='<h3>الجداول الحالية</h3>'+(k.length?k.map(n=>`<p style="margin:6px 0 0"><b>${esc(n)}</b>: ${DB[n].c.map(esc).join(' · ')} — ${DB[n].r.length} صف</p>`).join(''):'<p class="lead" style="margin:6px 0 0">ما في جداول بعد. ابدأ بالتمرين الأول.</p>')}
+function lrun(){const r=sqlRun($('#sq2').value);$('#out2').innerHTML=r.map(x=>x.err?`<p class="er">⚠ ${esc(x.err)}</p>`:x.msg?`<p class="okm">✓ ${esc(x.msg)}</p>`:`<div style="overflow:auto"><table class="tb"><tr>${x.cols.map(c=>`<th>${esc(c)}</th>`).join('')}</tr>${x.rows.map(r=>`<tr>${r.map(v=>`<td>${v===null?'null':esc(typeof v==='number'&&!Number.isInteger(v)?+v.toFixed(2):v)}</td>`).join('')}</tr>`).join('')||`<tr><td colspan="${x.cols.length}">لا توجد صفوف</td></tr>`}</table></div>`).join('')||'<p class="lead" style="margin:0">اكتب أمراً ثم اضغط تشغيل.</p>';tbs();sfx(r.some(x=>x.err)?'undo':'done')}
+const EXS=[['1 · أنشئ جدولاً','create table expenses (id int, title text, amount int);','CREATE TABLE ينشئ جدولاً فيه أعمدة وأنواعها.'],['2 · أضف صفوفاً',`insert into expenses values (1, 'bread', 3000), (2, 'electricity', 25000), (3, 'water', 8000);`,'INSERT يضيف سجلات. القيم النصية بين علامتي تنصيص.'],['3 · اعرض كل شي','select * from expenses;','علامة * تعني: كل الأعمدة.'],['4 · فلتر النتيجة','select title, amount from expenses where amount > 5000;','WHERE يختار الصفوف المطابقة فقط.'],['5 · رتّب النتيجة','select * from expenses order by amount desc;','ORDER BY يرتّب، وdesc يعني من الأكبر للأصغر.'],['6 · عدّل صفاً','update expenses set amount = 3500 where id = 1;','UPDATE يعدّل. لا تنسَ WHERE وإلا يتعدّل كل شي!'],['7 · احذف صفاً','delete from expenses where id = 2;','DELETE يحذف الصفوف المطابقة. بعدها نفّذ التمرين 3 وشوف الفرق.'],['8 · شرط مركّب','select * from expenses where amount > 1000 and amount < 10000;','and يطلب تحقق الشرطين معاً، وor يكفي أحدهما. وlike تبحث بنمط، مثل: title like \'b%\'.'],['9 · عدّ وجمع','select count(*), sum(amount), avg(amount) from expenses;','دوال التجميع: count عدد الصفوف، sum المجموع، avg المتوسط، وكذلك min وmax.'],['10 · جدولان مترابطان',`create table customers (id int, name text);
+create table orders (id int, customer_id int, total int);
+insert into customers values (1, 'Ali'), (2, 'Sara');
+insert into orders values (10, 1, 5000), (11, 1, 7000), (12, 2, 3000);`,'تجهيز جدول الزبائن والطلبات، وcustomer_id هو المفتاح الخارجي.'],['11 · الربط JOIN','select c.name, o.total from customers c join orders o on c.id = o.customer_id;','JOIN يجمع صفوف الجدولين المتطابقة بالمفتاح. الحرفان c وo اسمان مختصران للجدولين.'],['12 · تجميع لكل زبون','select c.name, count(*) as orders, sum(o.total) as total from customers c join orders o on c.id = o.customer_id group by c.name order by total desc;','GROUP BY يجمع الصفوف حسب عمود، فنعرف عدد طلبات كل زبون ومجموعها.']];
+$('#exl').innerHTML=EXS.map((e,i)=>`<div class="exc"><b>${e[0]}</b><p>${e[2]}</p><div class="cd">${bd(esc(e[1]))}</div><button class="btn s" data-ex="${i}"><i data-lucide="play"></i>جرّبه</button></div>`).join('');
+const TT=(a,b)=>`<table class="tb" style="width:100%">${a}</table>`;
+let RLM=2,RU='ali',RT=['شراء خبز'],cA=1,cB=1;const RD=[['خبز','ali'],['كهرباء','ali'],['دواء','sara'],['ماء','sara']];
+function rls(){if(!$('#rlt'))return;$$('[data-rm]').forEach(b=>b.classList.toggle('act',+b.dataset.rm===RLM));$$('[data-ru]').forEach(b=>b.classList.toggle('act',b.dataset.ru===RU));
+const v=RLM==0?RD:RLM==1||RU=='guest'?[]:RD.filter(r=>r[1]==RU);
+$('#rlt').innerHTML='<table class="tb" style="width:100%"><tr><th>title</th><th>owner</th></tr>'+(v.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')||'<tr><td colspan="2">لا شي يظهر</td></tr>')+'</table>';
+$('#rlm').textContent=RLM==0?'خطر: بدون RLS يقرأ أي شخص كل البيانات.':RLM==1?'RLS مفعّل بدون سياسة: لا يمر أحد عبر المفتاح العام.':RU=='guest'?'الزائر بلا تسجيل دخول ما عنده هوية، فلا يرى شي.':'السياسة تسمح لكل مستخدم برؤية صفوفه فقط.'}
+function rt(){if(!$('#rtA'))return;const L=c=>RT.slice(0,c).map((x,i)=>`<li${i==c-1&&c>1?' class="nw"':''}>${x}</li>`).join('');$('#rtA').innerHTML=L(cA);$('#rtB').innerHTML=L(cB)}
+const RLSIM=`<div class="card sim"><b>جرّب بنفسك: شنو يشوف كل مستخدم؟</b><div class="ac2" style="margin:10px 0"><button class="btn o" data-rm="0">بدون RLS</button><button class="btn o" data-rm="1">RLS بلا سياسة</button><button class="btn o" data-rm="2">RLS مع سياسة</button></div><div class="ac2" style="margin:0 0 10px"><button class="btn o" data-ru="ali">علي</button><button class="btn o" data-ru="sara">سارة</button><button class="btn o" data-ru="guest">زائر بلا تسجيل</button></div><div id="rlt"></div><p class="qe" id="rlm" style="margin-top:8px"></p></div>`;
+const RTSIM=`<div class="card sim"><b>جرّب: أضف مهمة من جهاز، وشوفها بالثاني</b><div class="two" style="margin:12px 0"><div class="mw"><div class="mt"><i></i><i></i><i></i><span>الجهاز A (علي)</span></div><div class="mb"><ul class="tl3" id="rtA"></ul><button class="btn s" data-rt="A">+ مهمة من A</button></div></div><div class="mw"><div class="mt"><i></i><i></i><i></i><span>الجهاز B (سارة)</span></div><div class="mb"><ul class="tl3" id="rtB"></ul><button class="btn s" data-rt="B">+ مهمة من B</button></div></div></div><p class="note">القاعدة السحابية تدفع التغيير للأجهزة المفتوحة، وهذا اسمه Realtime.</p></div>`;
+const LC=[
+{t:'ليش نحتاج قاعدة بيانات؟',m:8,g:'تفهم شنو المشكلة اللي تحلها قاعدة البيانات.',b:['لما يحفظ برنامجك معلوماته داخل نفسه (مثل localStorage) تبقى على نفس الجهاز والمتصفح فقط. لو مسحت بيانات المتصفح أو غيّرت الجهاز، تضيع.','قاعدة البيانات (Database) مكان منظّم لحفظ المعلومات خارج برنامجك: أكثر من جهاز يوصلها، ومحمية، وتبحث فيها بسرعة حتى لو فيها آلاف السجلات.','تخيّلها دفتر محاسبة ضخم مرتب بجداول، وبرنامجك هو الموظف اللي يكتب ويقرأ منه.'],k:[['Database','قاعدة البيانات: مخزن منظّم للمعلومات'],['localStorage','تخزين داخل المتصفح فقط']],v:TT(`<tr><th>الميزة</th><th>ملف أو localStorage</th><th>قاعدة بيانات</th></tr><tr><td>تبقى لو غيّرت الجهاز؟</td><td>لا</td><td>نعم</td></tr><tr><td>أكثر من جهاز ومستخدم</td><td>صعب</td><td>سهل</td></tr><tr><td>البحث بين آلاف السجلات</td><td>بطيء</td><td>فوري</td></tr><tr><td>حماية لكل مستخدم</td><td>ضعيفة</td><td>قوية (RLS)</td></tr>`),q:['شنو يصير ببيانات localStorage لو مسحت بيانات المتصفح؟',['تبقى','تضيع','تنتقل لجهاز ثاني'],1,'localStorage مرتبط بالمتصفح والجهاز، فمسحه يمسح البيانات.']},
+{t:'الجداول والأعمدة والأنواع',m:10,g:'تقرأ أي جدول وتعرف شنو يمثل كل جزء.',b:['الجدول (Table) قائمة وحدة من نوع واحد: مصاريف، زبائن، منتجات.','العمود (Column) يحدد نوع معلومة معيّنة وله نوع: نص (text)، رقم (numeric أو int)، تاريخ (date)، صح/خطأ (boolean).','الصف (Row) سجل واحد. وكل صف له رقم فريد اسمه المفتاح الأساسي (Primary Key)، عادةً id، مثل رقم الهوية: ما يتكرر مرتين.'],k:[['Column','عمود: نوع معلومة'],['Row','صف: سجل واحد'],['Primary Key','رقم فريد لكل صف']],v:TT(`<tr><th>id</th><th>title</th><th>amount</th><th>spent_on</th></tr><tr><td><small>uuid</small></td><td><small>text</small></td><td><small>numeric</small></td><td><small>date</small></td></tr><tr><td>a1</td><td>خبز</td><td>3000</td><td>10/25</td></tr><tr><td>a2</td><td>كهرباء</td><td>25000</td><td>10/24</td></tr>`),q:['شنو وظيفة المفتاح الأساسي id؟',['يعطي كل صف رقماً فريداً يميّزه','يخزّن الصور','يحمي الجدول'],0,'مثل رقم الهوية: يميّز كل سجل عن غيره.']},
+{t:'لغة SQL: الأوامر الخمسة',m:12,g:'تكتب أوامر SQL الأساسية وتفهم نتيجتها.',b:['SQL هي اللغة اللي تكلّم بيها قاعدة البيانات. خمسة أوامر تكفي لأغلب الشغل: CREATE TABLE ينشئ جدولاً، INSERT يضيف صفاً، SELECT يقرأ، UPDATE يعدّل، DELETE يحذف.','جرّب كل أمر بنفسك في «مختبر SQL»: كل شي يصير داخل المتصفح بدون أي خطر.'],k:[['SQL','لغة التخاطب مع قاعدة البيانات'],['WHERE','شرط يختار صفوفاً معيّنة']],v:mw('SQL',`<div class="cd">create table expenses (id int, title text, amount int);
+insert into expenses values (1, 'خبز', 3000);
+select * from expenses where amount > 1000;
+update expenses set amount = 3500 where id = 1;
+delete from expenses where id = 1;</div><button class="btn s" data-go="lab"><i data-lucide="flask-conical"></i>افتح المختبر</button>`),q:['أي أمر تستخدمه لقراءة البيانات؟',['SELECT','INSERT','DELETE'],0,'SELECT يعني: اعرض لي. INSERT يضيف وDELETE يحذف.']},
+{t:'العلاقات بين الجداول',m:10,g:'تربط جدولين بمفتاح خارجي.',b:['بدل ما تكرر اسم الزبون في كل طلب، نحفظ الزبائن بجدول والطلبات بجدول ثاني، ونربط بينهم برقم.','العمود اللي يشير لصف في جدول ثاني اسمه المفتاح الخارجي (Foreign Key): هنا customer_id في الطلبات يشير لـ id في الزبائن.','هالطريقة توفر مساحة وتمنع الأخطاء: لو غيّرت اسم الزبون مرة وحدة، يتغير عند الكل. ولما تحتاج بيانات الجدولين معاً تستخدم JOIN: جرّبه في مختبر SQL (التمارين 10 إلى 12).'],k:[['Foreign Key','عمود يشير لصف في جدول ثاني'],['Relation','العلاقة بين جدولين']],v:`<div class="rel"><table class="tb"><tr><th colspan="2">customers</th></tr><tr><td>id</td><td>name</td></tr><tr class="rw" data-cid="1"><td>1</td><td>علي</td></tr><tr class="rw" data-cid="2"><td>2</td><td>سارة</td></tr></table><svg width="70" height="24" viewBox="0 0 70 24"><path class="ar" d="M6 12H62M50 4l12 8-12 8"/></svg><table class="tb"><tr><th colspan="3">orders</th></tr><tr><td>id</td><td>customer_id</td><td>total</td></tr><tr class="rw" data-cid="1"><td>10</td><td>1</td><td>5000</td></tr><tr class="rw" data-cid="1"><td>11</td><td>1</td><td>7000</td></tr><tr class="rw" data-cid="2"><td>12</td><td>2</td><td>3000</td></tr></table></div><p class="cp" style="margin-top:10px">اضغط على أي صف لترى الصفوف المرتبطة به. customer_id = 1 يعني: الطلب يخص «علي».</p>`,q:['customer_id داخل جدول الطلبات يسمى...',['مفتاح خارجي','مفتاح أساسي','نوع بيانات'],0,'لأنه يشير لصف في جدول ثاني.']},
+{t:'كيف يتكلم برنامجك مع القاعدة؟',m:12,g:'تفهم الرحلة من برنامجك إلى قاعدة البيانات.',b:['برنامجك (المتصفح) ما يفتح قاعدة البيانات مباشرة. يرسل طلباً عبر الإنترنت لواجهة (API) مثل Supabase، والواجهة تنفّذه وترجّع الجواب.','يحتاج برنامجك شيئين فقط: عنوان المشروع (Project URL) والمفتاح العام (anon key). هذا المفتاح مصمم ليوضع في البرنامج، لأن الحماية الحقيقية تكون في سياسات RLS.','بمكتبة supabase-js الكود قصير. سطر تحميل المكتبة تلقاه في وثائق Supabase الرسمية.'],k:[['API','باب يتكلم منه برنامجك مع خدمة'],['anon key','مفتاح عام مسموح بالبرنامج']],v:flow(['متصفحك','واجهة API','قاعدة البيانات'])+mw('app.js',`<div class="cd">const { createClient } = supabase  // بعد تحميل المكتبة
+const db = createClient('YOUR_SUPABASE_URL', 'YOUR_ANON_KEY')
+
+await db.from('expenses').insert({ title: 'خبز', amount: 3000 })
+const { data, error } = await db.from('expenses').select('*')</div>`),q:['أي مفتاح يوضع داخل البرنامج؟',['anon العام','service_role السري'],0,'service_role صلاحياته كاملة؛ لا يوضع بالواجهة أبداً.']},
+{t:'الأمان: المفاتيح وسياسات RLS',m:12,g:'تحمي بيانات كل مستخدم من الثاني.',b:['بما أن المفتاح العام ظاهر داخل الملف، الحماية الحقيقية تكون من القاعدة نفسها: تفعّل RLS (Row Level Security) على كل جدول وتكتب سياسة تحدد من يقرأ ومن يعدّل.','RLS مثل بوابة على كل جدول: بدون سياسة تسمح، ما يمر أحد عبر المفتاح العام.','مثال سياسة: كل مستخدم يقرأ صفوفه فقط (تحتاج عمود user_id وتسجيل دخول).'],k:[['RLS','حماية على مستوى الصف'],['Policy','قاعدة تحدد من يقرأ أو يعدّل']],v:mw('policy.sql',`<div class="cd">alter table expenses enable row level security;
+
+create policy "own rows"
+on expenses for select
+using (auth.uid() = user_id);</div>`)+RLSIM,q:['فعّلت RLS ولم تكتب أي سياسة. شنو يصير؟',['الكل يقرأ','ما يقدر أحد يقرأ عبر المفتاح العام','البيانات تنحذف'],1,'بدون سياسة تسمح، الوصول مرفوض.']},
+{t:'النسخ الاحتياطي والمزامنة',m:10,g:'تفرّق بين الحفظ والنسخة الاحتياطية والمزامنة.',b:['الحفظ في قاعدة سحابية يحميك من ضياع الجهاز، لكن ما يغني عن النسخة الاحتياطية: لو انحذف صف بالغلط، ينحذف عند الكل.','النسخة الاحتياطية (Backup) ملف عندك ترجع منه، والاستعادة (Restore) ترجيعه، ولازم تجرّبها قبل ما تحتاجها.','المزامنة (Sync) نفس البيانات على كل أجهزتك. أصعب مشكلة: تعدّل نفس الصف على جهازين بدون إنترنت، فأي نسخة نعتمد؟ أبسط قاعدة: آخر تعديل يفوز، مع تنبيه للمستخدم.'],k:[['Backup','نسخة احتياطية خارجية'],['Sync','مزامنة بين الأجهزة']],v:TT(`<tr><th>الموقف</th><th>الحل</th></tr><tr><td>انحذف صف بالغلط</td><td>النسخة الاحتياطية</td></tr><tr><td>تريد نفس البيانات على جهازين</td><td>المزامنة (قاعدة سحابية)</td></tr><tr><td>ضاع الجهاز</td><td>السحابة تحفظ بياناتك</td></tr>`),q:['حفظ البيانات في قاعدة سحابية يعني أنك ما تحتاج نسخة احتياطية.',['صح','غلط'],1,'الحذف بالغلط ينتقل للجميع؛ النسخة الاحتياطية تنقذك.']},
+{t:'التطبيق العملي: نربط كل شي',m:6,g:'تعرف خطة العمل الكاملة.',b:['الحين عندك الأساس. نمشي بهالترتيب: تجهّز الملف، تصمم الجداول مع Claude، تحصل على ملف SQL، تنشئ مشروع Supabase، تشغّل الملف، تفعّل الحماية، تربط البرنامج، تختبر، وتسوي نسخة احتياطية.','كل خطوة مشروحة بالتفصيل مع مثال ورسم وبرومت جاهز لـ Claude في قسم «التطبيق العملي».'],k:[['Supabase','خدمة تستضيف قاعدة بياناتك'],['schema.sql','ملف إنشاء الجداول']],v:'<div class="ac2"><button class="btn lg" data-go="path"><i data-lucide="route"></i>ابدأ التطبيق العملي</button><button class="btn o lg" data-go="lab"><i data-lucide="flask-conical"></i>مختبر SQL</button></div>',q:['شنو أول خطوة قبل أي تعديل؟',['نسخة أصلية من ملفك','حذف الملف القديم'],0,'النسخة الأصلية هي شبكة الأمان.']}];
+const N2=[
+{t:'النسخ الاحتياطي كنص وملف',m:12,g:'تسوي نسخة احتياطية كنص JSON وتعرف كيف تستعيدها.',b:['النسخة الاحتياطية (Backup) ببساطة: نص مرتب تنسخه وتحفظه في ملف. أشهر شكل له JSON، وهو نص يمثّل البيانات بأقواس وأسماء، يقرأه الإنسان ويفهمه البرنامج.','ثلاث طرق: (1) تصدير جدول كملف CSV من Table Editor في Supabase، (2) زر «تصدير» داخل برنامجك يقرأ الجداول ويحفظها ملف JSON، (3) نسخة كاملة بأدوات قواعد البيانات مثل pg_dump، وهذي للمتقدمين. راجع صفحة Backups في مشروعك لتعرف ما توفره خطتك.','القاعدة الذهبية: نسخة ما جرّبت استعادتها ما نعتبرها نسخة. جرّب في «مختبر SQL»: صدّر جداولك كنص، امسحها، ثم استعدها.'],k:[['JSON','نص منظّم يمثّل البيانات'],['CSV','ملف جدول نصي يفتح بإكسل'],['Restore','إرجاع البيانات من نسخة']],v:mw('backup.json',`<div class="cd">{ "version": 1,
+  "expenses": [
+    { "title": "خبز", "amount": 3000 }
+  ] }</div>`)+mw('export.js',`<div class="cd">const { data } = await db.from('expenses').select('*')
+const text = JSON.stringify({ version: 1, expenses: data }, null, 2)
+const a = document.createElement('a')
+a.href = URL.createObjectURL(new Blob([text], { type: 'application/json' }))
+a.download = 'backup.json'
+a.click()</div><button class="btn s" data-go="lab"><i data-lucide="flask-conical"></i>جرّبها في المختبر</button>`),q:['أي نسخة احتياطية نعتبرها موثوقة؟',['التي جرّبت استعادتها','التي أنشأتها فقط','التي حجمها كبير'],0,'النسخة التي لم تُختبر قد تكون تالفة وأنت ما تدري.']},
+{t:'تسجيل الدخول والمستخدمون',m:10,g:'تفهم كيف تعرف القاعدة من الذي يطلب.',b:['حتى تعرف قاعدة البيانات «من يطلب؟» تحتاج تسجيل دخول (Authentication). المستخدم يسجّل حساباً ببريد وكلمة مرور، ويحصل على هوية، وتستخدمها السياسات عبر auth.uid().','الكود قصير: signUp لإنشاء حساب، وsignInWithPassword لتسجيل الدخول. كلمات المرور تديرها الخدمة، وأنت ما تخزّنها بنفسك أبداً.','نفرّق بين المصادقة (Authentication): من أنت؟ والصلاحيات (Authorization): شنو تقدر تسوي؟ والثانية تتحكم فيها سياسات RLS.'],k:[['Authentication','التحقق من هوية المستخدم'],['Authorization','تحديد ما يُسمح له به'],['auth.uid()','رقم المستخدم الحالي داخل السياسات']],v:mw('auth.js',`<div class="cd">// إنشاء حساب
+await db.auth.signUp({ email: 'ali@example.com', password: '********' })
+
+// تسجيل الدخول
+const { data, error } = await db.auth.signInWithPassword({
+  email: 'ali@example.com', password: '********' })
+
+// من أنا؟
+const { data: { user } } = await db.auth.getUser()</div>`),q:['أين تُخزَّن كلمات مرور المستخدمين؟',['بنص عادي داخل جدول أصنعه','تديرها خدمة المصادقة وليس أنا','داخل ملف HTML'],1,'لا تخزّن كلمات المرور بنفسك؛ خدمة المصادقة تتولى ذلك بأمان.']},
+{t:'بيانات مشتركة لعائلة من 20 شخص',m:14,g:'تصمم قاعدة بيانات يشارك فيها عدة أشخاص ويظهر التغيير عند الكل.',b:['مثال: برنامج منزلي لعائلة من 20 شخص. أي واحد يضيف مهمة أو مصروفاً لازم يظهر عند الكل. هنا نحتاج بيانات مشتركة وليست خاصة بكل شخص.','التصميم: جدول households للمجموعة، وجدول members يربط كل مستخدم بمجموعته ودوره (admin أو member)، وكل جدول مشترك مثل tasks فيه عمود household_id.','السياسة: يقرأ ويضيف فقط من كان عضواً في نفس المجموعة. بعدها تفعّل Realtime للجدول من لوحة Supabase، فيوصل التغيير فوراً للأجهزة المفتوحة بدون إعادة تحميل.'],k:[['household_id','عمود يربط الصف بالمجموعة'],['Role','دور العضو: admin أو member'],['Realtime','وصول التغيير فوراً لكل الأجهزة']],v:flow(['شخص يضيف مهمة','قاعدة البيانات','تظهر عند الـ 20'])+TT(`<tr><th>الجدول</th><th>أعمدته</th><th>وظيفته</th></tr><tr><td>households</td><td>id, name</td><td>المجموعة (العائلة)</td></tr><tr><td>members</td><td>user_id, household_id, role</td><td>من ينتمي لأي مجموعة</td></tr><tr><td>tasks</td><td>id, household_id, title</td><td>المهام المشتركة</td></tr>`)+mw('shared.sql',`<div class="cd">create policy "members read tasks" on tasks for select
+using (household_id in (
+  select household_id from members where user_id = auth.uid()));
+
+// في البرنامج: استمع للتغييرات
+db.channel('tasks').on('postgres_changes',
+  { event: 'INSERT', schema: 'public', table: 'tasks' },
+  payload => console.log('مهمة جديدة', payload.new)).subscribe()</div>`)+RTSIM,q:['أي عمود يربط كل مهمة بمجموعة العائلة؟',['household_id','password','created_at'],0,'household_id يحدد لأي مجموعة تنتمي المهمة، والسياسة تعتمد عليه.']},
+{t:'قاعدة بيانات على حاسوبك وشبكتك',m:12,g:'تفهم الفرق بين قاعدة محلية على حاسوبك وقاعدة سحابية.',b:['مو لازم تكون قاعدة بياناتك على الإنترنت. تقدر تخليها على حاسوبك: SQLite ملف واحد يحتوي كل الجداول، ويشتغل بدون إنترنت.','الفرق: السحابة (Supabase) تخدم أجهزة كثيرة من أي مكان. وSQLite المحلي أبسط وأخصّ لكنه ما ينتقل لجهاز ثاني إلا إذا نسخت الملف أو بنيت مزامنة.','إذا تريد عائلتك توصل لبرنامج على حاسوبك عبر نفس الواي فاي: حاسوبك يصير خادماً (Server) وأجهزتهم عملاء (Client) يفتحون عنوانه داخل الشبكة مثل 192.168.1.10. الحاسوب لازم يبقى شغّال، ولا تعرّضه للإنترنت بدون حماية.'],k:[['SQLite','قاعدة بيانات في ملف واحد'],['Server','جهاز يخدم الطلبات'],['Client','جهاز أو برنامج يطلب الخدمة']],v:TT(`<tr><th>الخيار</th><th>أين البيانات</th><th>بدون إنترنت</th><th>أكثر من جهاز</th></tr><tr><td>IndexedDB</td><td>داخل المتصفح</td><td>نعم</td><td>لا</td></tr><tr><td>SQLite</td><td>ملف على حاسوبك</td><td>نعم</td><td>عبر الشبكة المنزلية فقط</td></tr><tr><td>Supabase</td><td>خادم على الإنترنت</td><td>لا</td><td>نعم</td></tr>`),q:['قاعدة SQLite المحلية تحتاج إنترنت لتشتغل؟',['نعم','لا'],1,'هي ملف على حاسوبك، فتشتغل بدون إنترنت.']},
+{t:'العمل بدون إنترنت وتعارض التعديلات',m:12,g:'تفهم كيف يتعامل برنامجك مع انقطاع الشبكة.',b:['لو انقطع الإنترنت وأنت تحفظ؟ برنامج جيد يحفظ التغيير محلياً أولاً في طابور (Queue)، وأول ما يرجع الاتصال يرسله للقاعدة. هذا مبدأ Offline-First.','المشكلة: شخصان عدّلا نفس السجل بدون اتصال. نحتاج قاعدة تعارض. أبسطها: آخر تعديل يفوز (Last Write Wins) اعتماداً على عمود updated_at، مع إظهار رسالة للمستخدم.','وكل تغيير لازم يعرف حالته: «بانتظار المزامنة» أو «تمت»، حتى ما يظن المستخدم أن بياناته انحفظت وهي لسا على جهازه فقط.'],k:[['Offline-First','احفظ محلياً أولاً ثم زامن'],['Queue','طابور تغييرات تنتظر الإرسال'],['Last Write Wins','آخر تعديل يفوز']],v:flow(['تحفظ بدون إنترنت','طابور محلي','يُرسل عند الاتصال'])+mw('queue.js',`<div class="cd">// فكرة مبسطة للطابور
+const queue = JSON.parse(localStorage.getItem('queue') || '[]')
+queue.push({ table: 'tasks', data: { title: 'شراء خبز' }, at: Date.now() })
+localStorage.setItem('queue', JSON.stringify(queue))
+// عند رجوع الإنترنت: أرسل كل عنصر ثم احذفه من الطابور</div>`),q:['شخصان عدّلا نفس السجل بدون إنترنت. أبسط قاعدة للحل؟',['آخر تعديل يفوز مع تنبيه','نحذف السجل','نتجاهل التعديلين'],0,'قاعدة Last Write Wins بسيطة، ويُفضّل إظهار تنبيه للمستخدم.']}];
+LC.push(...N2);
+const N3=[
+{t:'الفهارس والأداء',m:10,g:'تفهم كيف تخلي قاعدتك سريعة لما تكبر البيانات.',b:['الفهرس (Index) مثل فهرس الكتاب: بدل ما تقلّب كل الصفحات تروح مباشرة للمكان. القاعدة بدون فهرس تفحص كل الصفوف، ومعه تقفز للصف المطلوب.','الفهرس يسرّع البحث والترتيب والربط على العمود المفهرس، لكنه يستهلك مساحة ويبطّئ الإضافة قليلاً. فلا تفهرس كل شي: اختر الأعمدة اللي تبحث أو ترتّب بها كثيراً، وغالباً الأعمدة الخارجية مثل household_id. المفتاح الأساسي يُفهرس تلقائياً.','وأهم عادة ثانية: لا تجلب آلاف الصفوف دفعة وحدة. اطلب صفحة صفحة (Pagination) باستخدام limit أو range.'],k:[['Index','فهرس يسرّع البحث'],['Pagination','جلب البيانات على دفعات']],v:mw('indexes.sql',`<div class="cd">-- فهرس على عمود نبحث به كثيراً
+create index expenses_spent_on_idx on expenses (spent_on);
+
+-- مفيد غالباً مع الأعمدة الخارجية والسياسات
+create index tasks_household_idx on tasks (household_id);</div>`)+mw('page.js',`<div class="cd">// آخر 50 مصروفاً فقط، وليس كل شي
+const { data } = await db.from('expenses')
+  .select('*').order('created_at', { ascending: false }).range(0, 49)</div>`),q:['أي عمود يستحق فهرساً غالباً؟',['عمود تبحث أو ترتّب به كثيراً','كل الأعمدة بلا استثناء','عمود لا تستخدمه أبداً'],0,'الفهرس يسرّع البحث لكنه يكلّف مساحة وإضافة أبطأ، فنختاره بعناية.']},
+{t:'SQL مقابل NoSQL: Supabase وFirebase',m:10,g:'تعرف الفرق بين نوعي قواعد البيانات وتختار الأنسب لمشروعك.',b:['قاعدة SQL (مثل PostgreSQL اللي يعتمد عليها Supabase) تخزّن البيانات في جداول وصفوف وعلاقات. وقواعد NoSQL (مثل Firestore في Firebase) تخزّنها مستندات (Documents) داخل مجموعات (Collections) بشكل مرن.','لا يوجد الأفضل دائماً. بياناتك لو كثيرة العلاقات (مستخدمون ← عائلة ← مهام) فالأنسب غالباً SQL لأن الربط بـ JOIN سهل. وFirebase خيار قوي لتطبيقات تحتاج مزامنة فورية وعملاً بدون إنترنت جاهزاً.','قبل القرار، تحقق من ميزات الخدمتين وأسعارهما الحالية من موقعيهما الرسميين، لأنها تتغير.'],k:[['NoSQL','قاعدة بيانات بلا جداول ثابتة'],['Document','مستند: سجل مرن داخل مجموعة'],['Firestore','قاعدة NoSQL من Firebase']],v:TT(`<tr><th>الجانب</th><th>Supabase (SQL)</th><th>Firebase (NoSQL)</th></tr><tr><td>شكل البيانات</td><td>جداول وصفوف</td><td>مستندات داخل مجموعات</td></tr><tr><td>الربط بين البيانات</td><td>JOIN سهل</td><td>يحتاج تصميماً مختلفاً</td></tr><tr><td>الحماية</td><td>سياسات RLS</td><td>قواعد الأمان (Security Rules)</td></tr><tr><td>العمل بدون إنترنت</td><td>تبنيه بنفسك</td><td>موجود في مكتباتهم</td></tr><tr><td>أصل التقنية</td><td>PostgreSQL مفتوح المصدر</td><td>خدمة من Google</td></tr>`),q:['تطبيقك علاقاته كثيرة (مستخدمون ← عائلة ← مهام). أي نموذج أنسب غالباً؟',['SQL: جداول وعلاقات','NoSQL دائماً','لا فرق إطلاقاً'],0,'العلاقات الكثيرة تناسب SQL وJOIN. لكن Firebase يبقى قوياً للمزامنة الفورية والعمل بدون إنترنت.']},
+{t:'قائمة فحص قبل أن تعتمد على تطبيقك',m:8,g:'تراجع كل ما تعلّمته قبل ما تضع بيانات حقيقية.',b:['قبل ما تستخدم تطبيقك ببيانات حقيقية، علّم على كل بند تأكدت منه. وكل بند منها مرّ بك في محاضرة سابقة.','نصيحة: سوِّ مشروعاً تجريبياً منفصلاً للتجارب (Staging)، ولا تجرّب على مشروعك الحقيقي.'],k:[['Rotate','تغيير مفتاح تسرّب أو انكشف'],['Staging','بيئة تجربة منفصلة عن الحقيقية']],v:`<div>${['عندي نسخة أصلية من ملفات البرنامج','فعّلت RLS على كل الجداول وكتبت سياسات صحيحة','استبدلت سياسات التجربة المفتوحة بسياسات المستخدمين','المفتاح داخل البرنامج هو العام فقط (anon أو publishable)','جرّبت الإضافة والحذف من جهازين','جرّبت قطع الإنترنت وشفت شنو يصير','سوّيت نسخة احتياطية وجرّبت استعادتها','عندي مكان خارجي أحفظ فيه النسخ'].map(x=>`<label class="chk"><input type="checkbox">${x}</label>`).join('')}</div>`,q:['أي بند أخطر أن تنساه؟',['استبدال سياسات التجربة المفتوحة','تغيير لون التطبيق'],0,'سياسات التجربة تسمح لأي شخص بالوصول، فلا تتركها على بيانات حقيقية.']}];
+LC.push(...N3);
+let lcd=[],lci=0;try{lcd=JSON.parse(localStorage.getItem('jl')||'[]')}catch(e){}
+const svl=()=>{try{localStorage.setItem('jl',JSON.stringify(lcd))}catch(e){}};
+function lec(){const l=LC[lci],d=lcd.includes(lci);
+$('#ll').innerHTML=LC.map((x,i)=>`<button class="ti${i==lci?' on':''}${lcd.includes(i)?' dn':''}" data-l="${i}"><span class="tn">${lcd.includes(i)?'✓':i+1}</span><span>${x.t}</span></button>`).join('');
+$('#ld').innerHTML=`<span class="tag">المحاضرة ${lci+1} من ${LC.length} · ${l.m} دقائق</span><h2 style="margin-top:8px">${l.t}</h2><p class="eg" style="margin:10px 0 18px"><b>هدف المحاضرة:</b> ${l.g}</p>${l.b.map(x=>`<p class="lp">${x}</p>`).join('')}<div class="lv">${l.v}</div><div class="card lq"><b>تأكد من فهمك: ${l.q[0]}</b><div class="ac2" style="margin-top:12px">${l.q[1].map((o,j)=>`<button class="btn o lo" data-j="${j}">${o}</button>`).join('')}</div><p class="qe"></p></div><div class="df"><button class="btn o" data-lp ${lci?'':'disabled'}><i data-lucide="arrow-right"></i>السابقة</button><button class="btn" data-lf><i data-lucide="${d?'rotate-ccw':'check'}"></i>${d?'إلغاء الإتمام':'أتممت المحاضرة'}</button></div>`;
+$('#lr').innerHTML=`<div class="card"><h3>كلمات جديدة</h3>${l.k.map(k=>`<p style="margin:8px 0 0"><b>${k[0]}</b><br><small style="color:var(--mu)">${k[1]}</small></p>`).join('')}</div><div class="card"><h3>تقدّمك</h3><p class="lead" style="margin:4px 0 0;font-size:15px">${lcd.length} من ${LC.length} محاضرات</p></div>`;hsr();ic()}
+function hsr(){rcur();const a=lcd.length,b=dn.length,nl=LC.findIndex((l,i)=>!lcd.includes(i));$('#hs').innerHTML=`<div class="card"><i class="rg3" style="--p:${Math.round(a/LC.length*100)}"><b>${a}/${LC.length}</b></i><div><h3>المحاضرات</h3><small>${a==LC.length?'أنهيت كل المحاضرات':'تابع التعلّم'}</small></div></div><div class="card"><i class="rg3" style="--p:${Math.round(b/GS.length*100)}"><b>${b}/${GS.length}</b></i><div><h3>التطبيق العملي</h3><small>خطوات منجزة</small></div></div><div class="card"><div class="ico"><i data-lucide="flag"></i></div><div><h3>${nl<0?'ابدأ التطبيق العملي':LC[nl].t}</h3><small>${nl<0?'أنت جاهز':'المحاضرة التالية'}</small></div></div>`;ic()}
+
+const pth1=pth;pth=function(){pth1();hsr()};
+document.addEventListener('click',e=>{const q=s=>e.target.closest(s);let x;
+if(x=q('[data-l]')){lci=+x.dataset.l;lec()}
+if(q('[data-lp]')){lci=Math.max(0,lci-1);lec()}
+if(q('[data-lf]')){const i=lci,was=lcd.includes(i);lcd=was?lcd.filter(k=>k!==i):[...lcd,i];svl();sfx(was?'undo':'done');if(!was){burst($('[data-lf]'));if(lcd.length===LC.length){sfx('win');toast('مبروك! أنهيت كل المحاضرات')}else if(i<LC.length-1)lci=i+1}lec()}
+if(x=q('.lo')){const c=x.closest('.lq');if(c.dataset.d)return;c.dataset.d=1;const Q=LC[lci].q,ok=+x.dataset.j===Q[2];x.classList.add(ok?'ok2':'bad2');if(!ok)c.querySelectorAll('.lo')[Q[2]].classList.add('ok2');c.querySelector('.qe').textContent=(ok?'صح! ':'مو بالضبط. ')+Q[3];sfx(ok?'done':'undo')}
+if(x=q('[data-ex]')){$('#sq2').value=EXS[+x.dataset.ex][1];lrun()}
+if(q('#run'))lrun();
+if(q('#rsl')){for(const k in DB)delete DB[k];$('#out2').innerHTML='';tbs()}});
+addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'&&e.target.id==='sq2'){e.preventDefault();lrun()}});
+let EXM=null;
+function xp(topic,ctx,q){return `أنا مبتدئ تماماً ولا أعرف شيئاً عن هذا الموضوع. أريدك أن تكون معلمي الصبور.
+الموضوع: «${topic}»
+السياق: ${ctx}${q?`
+الذي لم أفهمه تحديداً: ${q}`:''}
+
+اشرح لي من تحت الصفر، بلغة عربية بسيطة (ويفضّل لهجة عراقية بسيطة)، وبهذا الترتيب:
+1) تشبيه من الحياة اليومية يوضح الفكرة قبل أي مصطلح تقني.
+2) الشرح خطوة بخطوة، وكل مصطلح إنجليزي تذكره اشرح معناه فوراً.
+3) ثلاثة أمثلة عملية متدرجة من السهل إلى الأصعب، منها مثال على برنامج مصاريف، ومثال على برنامج مهام لعائلة من 20 شخصاً.
+4) رسم توضيحي: ارسم مخططاً (SVG أو مخطط نصي ASCII) يبين الفكرة، مع جدول إذا لزم.
+5) الأخطاء الشائعة عند المبتدئين وكيف أتجنبها.
+6) تمرين صغير أجرّبه بنفسي، مع حله بعد أن أحاول.
+7) مصادر للتعلّم: روابط الوثائق الرسمية، ومقالات عربية، وفيديوهات يوتيوب عربية. اقترح عناوين وكلمات بحث دقيقة، ولا تخترع أي رابط. إذا كانت عندك أداة بحث على الإنترنت فاستخدمها وأعطني الروابط الفعلية التي فتحتها، وإن لم تستطع التحقق من رابط فقل لي بصراحة.
+8) ثلاثة أسئلة اختبار قصيرة في النهاية، وإجاباتها مخفية حتى أجيب أنا.
+
+شروط: لا تفترض أنني أعرف أي مصطلح، ولا تقفز بين الخطوات، وإن لم تكن متأكداً من معلومة فاذكر ذلك. بعد الشرح اسألني سؤالاً واحداً للتأكد أنني فهمت.`}
+function openEx(topic,ctx){EXM={topic,ctx};$('#mt').textContent='اسأل الذكاء: '+topic;$('#mqw').style.display='';$('#mq').value='';$('#mp').value=xp(topic,ctx,'');$('#md').classList.add('on')}
+$('#mq').oninput=e=>{if(EXM)$('#mp').value=xp(EXM.topic,EXM.ctx,e.target.value)};
+const yu=d=>d.startsWith('p:')?'https://www.youtube.com/playlist?list='+d.slice(2):'https://www.youtube.com/watch?v='+d;
+const YS=q=>'https://www.youtube.com/results?search_query='+encodeURIComponent(q);
+const VT={EawjvGrKWlI:'شرح قواعد البيانات للمبتدئين بالعربي',"3jioDZLlgwo":'الدرس 1: مقدمة إلى قواعد البيانات',q8VilMwPrR0:'قواعد بيانات: شرح تفصيلي من الصفر','4Z8rjQ_iuUg':'شرح أوامر SQL: insert وdelete وupdate وselect','p:PLaKH4x6WxzvIXwTEPFdS2OkowWyBDlZyq':'قائمة: SQL للمبتدئين بالعربي',wvX33JhPCdk:'الجداول والعلاقات المتعددة',O2p7QQXIAG0:'شرح JSON وAPI مع أمثلة',nL1xExyuPyU:'دورة تعلّم Supabase من الصفر (1)',JDSg5cIpG3Y:'Supabase CRUD: شرح بالعربي',ZfREz73BOuQ:'النسخ الاحتياطي واسترجاع البيانات','4dz4qDMwmCM':'ما هو JSON وفائدته في البرمجة'};
+const PL='p:PLaKH4x6WxzvIXwTEPFdS2OkowWyBDlZyq',DOC=['وثائق Supabase الرسمية','https://supabase.com/docs'],RM=['شرح Supabase بالعربي (ملف رسمي مترجم)','https://github.com/supabase/supabase/blob/master/i18n/README.ar.md'],JA=['مقال: ما هو JSON وما استخداماته؟','https://abuelfateh.com/blog/%D9%85%D8%A7-%D9%87%D9%88-json-%D9%88%D9%85%D8%A7-%D9%87%D9%8A-%D8%A5%D8%B3%D8%AA%D8%AE%D8%AF%D8%A7%D9%85%D8%A7%D8%AA%D9%87/'];
+const VID=[
+{a:['EawjvGrKWlI','3jioDZLlgwo'],b:['q8VilMwPrR0'],q:['قواعد البيانات للمبتدئين بالعربي','شرح الجداول والأعمدة بالعربي']},
+{a:['q8VilMwPrR0'],b:['4Z8rjQ_iuUg'],q:['الجداول والأعمدة والمفتاح الأساسي شرح عربي','أوامر SQL للمبتدئين بالعربي']},
+{a:['4Z8rjQ_iuUg',PL],b:['wvX33JhPCdk'],q:['SQL للمبتدئين بالعربي','المفتاح الخارجي والعلاقات بين الجداول شرح عربي']},
+{a:['wvX33JhPCdk',PL],b:['O2p7QQXIAG0'],q:['العلاقات بين الجداول شرح عربي','API وJSON شرح عربي']},
+{a:['O2p7QQXIAG0'],b:['nL1xExyuPyU'],q:['ما هو API شرح عربي','Supabase شرح عربي للمبتدئين'],r:[DOC,RM]},
+{a:[],b:[],q:['Supabase RLS شرح عربي','Row Level Security شرح عربي'],r:[DOC]},
+{a:['ZfREz73BOuQ'],b:['4dz4qDMwmCM'],q:['النسخ الاحتياطي شرح عربي','JSON شرح عربي']},
+{a:['nL1xExyuPyU'],b:['JDSg5cIpG3Y'],q:['Supabase من الصفر بالعربي','Supabase CRUD شرح عربي'],r:[DOC]},
+{a:['4dz4qDMwmCM','ZfREz73BOuQ'],b:[],q:['JSON شرح عربي','تصدير واستيراد JSON بالجافاسكربت شرح عربي'],r:[JA]},
+{a:[],b:[],q:['Supabase Auth تسجيل الدخول شرح عربي','مصادقة المستخدمين Authentication شرح عربي'],r:[DOC]},
+{a:['JDSg5cIpG3Y'],b:[],q:['Supabase Realtime شرح عربي','Supabase RLS شرح عربي'],r:[DOC]},
+{a:[],b:[],q:['SQLite شرح عربي للمبتدئين','الخادم والعميل والشبكة المحلية IP شرح عربي']},
+{a:[],b:[],q:['Offline First شرح عربي','مزامنة البيانات بدون إنترنت شرح عربي']}];
+VID.push({a:[],b:[],q:['الفهارس Index في قواعد البيانات شرح عربي','تحسين أداء قاعدة البيانات للمبتدئين شرح عربي']},{a:[],b:[],q:['الفرق بين SQL و NoSQL شرح عربي','Firebase مقابل Supabase بالعربي']},{a:['ZfREz73BOuQ'],b:[],q:['أمان قواعد البيانات للمبتدئين شرح عربي','النسخ الاحتياطي واستعادة البيانات شرح عربي']});
+const vlk=(h,i,s)=>`<a class="vl" target="_blank" rel="noopener" href="${h}"><i data-lucide="${i}"></i><span>${s}</span></a>`;
+function vcard(i){const v=VID[i],L=a=>a.map(d=>vlk(yu(d),'circle-play',VT[d])).join('');
+return `<div class="card"><h3><i data-lucide="circle-play"></i> فيديوهات عربية</h3>${v.a.length?'<small class="vh">تشرح الدرس</small>'+L(v.a):''}${v.b.length?'<small class="vh">لما سنطبقه بعد الدرس</small>'+L(v.b):''}<small class="vh">ابحث في يوتيوب</small>${v.q.map(x=>vlk(YS(x),'search',x)).join('')}${v.r?'<small class="vh">مقالات ومصادر</small>'+v.r.map(r=>vlk(r[1],'book-open',r[0])).join(''):''}<p class="note">الروابط من نتائج بحث، وجودتها وحداثتها تختلف. شاهد أول دقيقتين وقرّر إذا تناسبك.</p></div>`}
+const lec0=lec;lec=function(){lec0();$('#lr').insertAdjacentHTML('afterbegin','<div class="card aic"><h3><i data-lucide="sparkles"></i> ما فهمت الدرس؟</h3><p>الذكاء يشرحه لك من الصفر بأمثلة ورسوم ومصادر.</p><button class="btn" data-xl><i data-lucide="sparkles"></i>استعن بالذكاء</button></div>');$('#lr').insertAdjacentHTML('beforeend',vcard(lci));rls();rt();ic()};
+const SV={1:['EawjvGrKWlI'],3:['4Z8rjQ_iuUg'],4:['nL1xExyuPyU'],5:['nL1xExyuPyU','JDSg5cIpG3Y'],7:['JDSg5cIpG3Y'],9:['ZfREz73BOuQ']};
+const pth2=pth;pth=function(){pth2();const s=SV[cs]||[];$('#rp').insertAdjacentHTML('afterbegin','<div class="card aic"><h3><i data-lucide="sparkles"></i> ما فهمت الخطوة؟</h3><p>اطلب من الذكاء شرحاً شاملاً من الصفر.</p><button class="btn" data-xs><i data-lucide="sparkles"></i>استعن بالذكاء</button></div>'+(s.length?`<div class="card"><h3>فيديوهات عربية للخطوة</h3>${s.map(d=>vlk(yu(d),'circle-play',VT[d])).join('')}<p class="note">من نتائج بحث؛ شاهد أول دقيقتين وقرّر.</p></div>`:''));ic()};
+document.addEventListener('click',e=>{const q=s=>e.target.closest(s);
+if(q('[data-xl]')){const l=LC[lci];openEx(l.t,'محاضرة في كورس تعليمي عن ربط البرامج بقواعد البيانات. هدفها: '+l.g+' المصطلحات فيها: '+l.k.map(k=>k[0]).join('، '))}
+if(q('[data-xs]')){const g=GS[cs];openEx(g.t,'خطوة عملية في ربط برنامج بقاعدة بيانات على Supabase. '+g.w)}
+if(q('#axb')){openEx($('#ax').value.trim()||'موضوع أريد فهمه','سؤال عام أثناء تعلّم ربط البرامج بقواعد البيانات')}});
+lec();tbs();$('#out2').innerHTML='<p class="lead" style="margin:0">اختر تمريناً من اليمين أو اكتب أمرك بنفسك.</p>';
+$('#gl').innerHTML+=[['JSON','نص منظّم يمثّل البيانات، يُستخدم في النسخ الاحتياطي وتبادل البيانات.'],['CSV','ملف جدول نصي، أعمدته مفصولة بفواصل، ويفتح في إكسل.'],['SQLite','قاعدة بيانات تكون ملفاً واحداً على حاسوبك.'],['Realtime','ميزة توصّل التغيير فوراً لكل الأجهزة المفتوحة.'],['Authentication','التحقق من هوية المستخدم عبر تسجيل الدخول.'],['Server / Client','الخادم يقدّم الخدمة، والعميل هو من يطلبها.']].map(g=>`<details><summary>${g[0]}</summary><p>${g[1]}</p></details>`).join('');
+$('#bke').onclick=()=>{$('#bkt').value=JSON.stringify({version:1,tables:DB},null,2);$('#bkm').textContent=Object.keys(DB).length?'تم التصدير. انسخ النص واحفظه في ملف backup.json':'ما في جداول لتصديرها. نفّذ التمارين أولاً.'};
+$('#bkr').onclick=()=>{const m=$('#bkm');try{const o=JSON.parse($('#bkt').value);if(!o||o.version!==1||typeof o.tables!=='object'||!o.tables)throw Error('الملف ليس نسخة صالحة أو إصداره غير مدعوم');for(const k in o.tables){const x=o.tables[k];if(!Array.isArray(x.c)||!Array.isArray(x.r))throw Error('بنية الجدول '+k+' تالفة')}for(const k in DB)delete DB[k];Object.assign(DB,o.tables);tbs();m.textContent='تمت الاستعادة: '+Object.keys(DB).length+' جدول. جرّب select لتتأكد.';sfx('done')}catch(e){m.textContent='فشلت الاستعادة: '+(e instanceof SyntaxError?'النص ليس JSON صالحاً':e.message);sfx('undo')}};
+
+function kchk(){const u=$('#ku').value.trim(),k=$('#kk').value.trim(),o=[];const A=(c,s)=>o.push(`<p class="${c}" style="margin:4px 0">${c=='okm'?'✓':c=='er'?'✗':'⚠'} ${s}</p>`);
+const um=u.match(/^https:\/\/([a-z0-9-]+)\.supabase\.co\/?$/i);
+if(!u)A('er','الصق رابط المشروع (Project URL)');else if(um)A('okm','الرابط بالشكل الصحيح');else A('er','الرابط لازم يكون بالشكل https://xxxx.supabase.co بدون مسارات إضافية');
+if(!k)A('er','الصق المفتاح العام');
+else if(/^sb_secret_/.test(k))A('er','هذا مفتاح سري (secret). ممنوع تضعه في أي برنامج، وغيّره من لوحة Supabase.');
+else if(/^sb_publishable_/.test(k))A('okm','مفتاح عام من النوع الجديد (publishable): مسموح بالبرنامج');
+else if(k.split('.').length===3){try{const p=JSON.parse(atob(k.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
+if(p.role==='service_role')A('er','هذا مفتاح service_role السري! لا تضعه في أي برنامج، وغيّره فوراً من Project Settings.');
+else if(p.role==='anon'){A('okm','مفتاح anon العام: مسموح بالبرنامج');if(p.ref&&um&&p.ref!==um[1].toLowerCase())A('er','المفتاح يتبع مشروعاً مختلفاً عن الرابط')}
+else A('wn','نوع المفتاح غير معروف: '+esc(p.role))}catch(e){A('er','المفتاح يشبه JWT لكنه تالف أو ناقص')}}
+else A('er','شكل المفتاح غير معروف. انسخه كاملاً من Project Settings › API');
+$('#kr').innerHTML=o.join('');sfx(o.some(x=>x.includes('class="er"'))?'undo':'done')}
+$('#kb').onclick=kchk;
+$('#pbe').onclick=()=>{$('#pbt').value=JSON.stringify({version:1,dn,lcd,NT,ST});copy($('#pbt').value);$('#pbm').textContent='تم التصدير ونُسخ النص. احفظه في ملف أو ملاحظة خارج المتصفح.'};
+$('#pbr').onclick=()=>{const m=$('#pbm');try{const o=JSON.parse($('#pbt').value),ok=a=>Array.isArray(a)&&a.every(Number.isInteger);if(!o||o.version!==1||!ok(o.dn)||!ok(o.lcd)||!o.NT||typeof o.NT!=='object'||!o.ST||typeof o.ST!=='object')throw Error('النص ليس نسخة تقدّم صالحة');
+dn=o.dn.filter(i=>i>=0&&i<GS.length);lcd=o.lcd.filter(i=>i>=0&&i<LC.length);NT=Object.fromEntries(Object.entries(o.NT).map(([k,v])=>[k,String(v)]));ST={n:String(o.ST.n||'').slice(0,60),c:/^#[0-9a-f]{6}$/i.test(o.ST.c)?o.ST.c:ST.c,z:[0.92,1,1.12].includes(+o.ST.z)?+o.ST.z:1};
+sv();svl();saveST();try{localStorage.setItem('jnt',JSON.stringify(NT))}catch(e){}applyST();pth();lec();m.textContent='تمت الاستعادة: '+dn.length+' خطوة و'+lcd.length+' محاضرة.';sfx('done')}catch(e){m.textContent='فشلت الاستعادة: '+(e instanceof SyntaxError?'النص ليس JSON صالحاً':e.message);sfx('undo')}};
+function rcur(){$('#cur').innerHTML=LC.map((l,i)=>`<button class="cl${lcd.includes(i)?' dn':''}" data-go="lec" data-l="${i}"><span class="tn">${lcd.includes(i)?'✓':i+1}</span><span><b>${l.t}</b><small>${l.m} دقائق</small></span></button>`).join('')}
+const SEED=`create table expenses (id int, title text, amount int);
+insert into expenses values (1,'bread',3000),(2,'electricity',25000),(3,'water',8000),(4,'internet',30000);
+create table customers (id int, name text);
+create table orders (id int, customer_id int, total int);
+insert into customers values (1,'Ali'),(2,'Sara');
+insert into orders values (10,1,5000),(11,1,7000),(12,2,3000);`;
+const CH=[{q:'اعرض العمودين title وamount للمصاريف التي مبلغها أكبر من 5000.',h:'استخدم where amount > 5000',s:'select title, amount from expenses where amount > 5000;',t:'sel',e:[['electricity',25000],['water',8000],['internet',30000]]},
+{q:'اعرض title لأغلى مصروف فقط (صف واحد).',h:'رتّب تنازلياً بـ order by amount desc ثم limit 1',s:'select title from expenses order by amount desc limit 1;',t:'sel',e:[['internet']]},
+{q:'احسب مجموع كل المصاريف في عمود واحد.',h:'استخدم الدالة sum',s:'select sum(amount) from expenses;',t:'sel',e:[[66000]]},
+{q:'احذف المصاريف التي مبلغها أقل من 5000.',h:'delete from … where …',s:'delete from expenses where amount < 5000;',t:'st',tb:'expenses',e:[[2,'electricity',25000],[3,'water',8000],[4,'internet',30000]]},
+{q:'عدّل مبلغ electricity إلى 20000.',h:'update … set … where title = …',s:"update expenses set amount = 20000 where title = 'electricity';",t:'st',tb:'expenses',e:[[1,'bread',3000],[2,'electricity',20000],[3,'water',8000],[4,'internet',30000]]},
+{q:'اعرض اسم كل زبون ومجموع طلباته (name ثم المجموع).',h:'join ثم group by c.name',s:'select c.name, sum(o.total) from customers c join orders o on c.id = o.customer_id group by c.name;',t:'sel',e:[['Ali',12000],['Sara',3000]]}];
+let ci2=0,chd=[];try{chd=JSON.parse(localStorage.getItem('jc')||'[]')}catch(e){}
+function chr(){const c=CH[ci2];$('#chq').innerHTML=`<span class="tag">التحدي ${ci2+1} من ${CH.length}${chd.includes(ci2)?' · ✓ تم':''}</span><p style="margin:8px 0;font-weight:600">${c.q}</p><details><summary>تلميح</summary><p>${c.h}</p></details><details><summary>الحل (بعد المحاولة)</summary><div class="cd" style="margin-top:8px">${esc(c.s)}</div></details>`}
+function chk2(){const c=CH[ci2],user=$('#sq2').value,snap=JSON.parse(JSON.stringify(DB));let msg='',ok=false;
+try{for(const k in DB)delete DB[k];sqlRun(SEED);const r=sqlRun(user),er=r.find(x=>x.err);
+if(er)msg='خطأ في أمرك: '+er.err;else if(!r.length)msg='اكتب أمرك في المحرر أولاً.';
+else if(c.t==='sel'){const l=r[r.length-1];if(!l.cols)msg='هذا التحدي يحتاج أمر select.';else{ok=JSON.stringify(l.rows.map(x=>x.map(String)).sort())===JSON.stringify(c.e.map(x=>x.map(String)).sort());if(!ok)msg='النتيجة مختلفة (حصلت على '+l.rows.length+' صف). راجع الشرط أو الأعمدة.'}}
+else{const tb=DB[c.tb];ok=JSON.stringify(tb.r.map(o=>tb.c.map(k=>String(o[k]))).sort())===JSON.stringify(c.e.map(x=>x.map(String)).sort());if(!ok)msg='حالة الجدول بعد أمرك ليست المطلوبة. راجع شرط where.'}}
+catch(e){msg='خطأ: '+e.message}
+for(const k in DB)delete DB[k];Object.assign(DB,snap);
+if(ok&&!chd.includes(ci2)){chd.push(ci2);try{localStorage.setItem('jc',JSON.stringify(chd))}catch(e){}}
+$('#chm').innerHTML=ok?'<p class="okm">✓ إجابة صحيحة!</p>':'<p class="er">✗ '+esc(msg)+'</p>';sfx(ok?'done':'undo');chr();return ok}
+$('#chb').onclick=chk2;$('#chn').onclick=()=>{ci2=(ci2+1)%CH.length;$('#chm').innerHTML='';chr()};chr();
+document.addEventListener('click',e=>{const q=s=>e.target.closest(s);let x;
+if(x=q('.rw')){const c=x.dataset.cid,on=x.classList.contains('hl');$$('.rw').forEach(r=>r.classList.toggle('hl',!on&&r.dataset.cid===c))}
+if(x=q('[data-rm]')){RLM=+x.dataset.rm;rls()}if(x=q('[data-ru]')){RU=x.dataset.ru;rls()}
+if(x=q('[data-rt]')){const w=x.dataset.rt;RT.push((w==='A'?'مهمة من علي ':'مهمة من سارة ')+RT.length);if(w==='A')cA=RT.length;else cB=RT.length;rt();sfx('done');setTimeout(()=>{cA=cB=RT.length;rt()},700)}
+if(x=q('[data-ch]')){$('#mq').value=x.dataset.ch;if(EXM)$('#mp').value=xp(EXM.topic,EXM.ctx,x.dataset.ch)}});
+applyST();
+sbn();pth();runIntro();
+const h=location.hash.slice(1);go(V.some(v=>v[0]===h)?h:'home');
+</script>
+</body>
+</html>
