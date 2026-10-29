@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-th="dark" data-ac="amber">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0e1116">
+<title>سريع · SAREE3</title>
+<style>
+/* ===== DESIGN TOKENS ===== */
+:root{--bg:#0e1116;--s1:#161b22;--s2:#1e252e;--tx:#eceef2;--mu:#8d96a3;--bd:#262e39;--ac:#f5b942;--on-ac:#241a05;--ok:#3ecf8e;--dn:#f26d6d;
+--r1:8px;--r2:14px;--r3:22px;--sp1:6px;--sp2:12px;--sp3:16px;--sh:0 10px 30px #0006;--fs0:12px;--fs1:14px;--fs2:16px;--fs3:22px;
+--out:cubic-bezier(.22,1,.36,1);--spring:cubic-bezier(.2,.85,.25,1.25);--soft:cubic-bezier(.25,.8,.25,1);box-sizing:border-box}
+[data-th=light]{--bg:#f4f5f8;--s1:#fff;--s2:#eceff4;--tx:#1a1d24;--mu:#667085;--bd:#e0e4eb;--sh:0 10px 30px #0002}
+[data-ac=cyan]{--ac:#22d3ee;--on-ac:#042a31}[data-ac=violet]{--ac:#a78bfa;--on-ac:#1d1240}[data-ac=green]{--ac:#4ade80;--on-ac:#06280f}[data-ac=rose]{--ac:#fb7185;--on-ac:#3a0710}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:radial-gradient(110% 55% at 50% -8%,color-mix(in srgb,var(--ac) 13%,transparent),transparent 62%),var(--bg)}html,body{height:100%;margin:0}
+body{background:transparent;color:var(--tx);font:var(--fs2)/1.5 system-ui,-apple-system,"Segoe UI",Tahoma,"Noto Naskh Arabic",sans-serif;display:flex;flex-direction:column;height:100dvh;max-width:680px;margin:0 auto;transition:background-color .25s var(--soft)}
+:root{padding-top:env(safe-area-inset-top,0px)}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+input,textarea,select{font:inherit;color:var(--tx);background:var(--s1);border:1px solid var(--bd);border-radius:var(--r2);padding:10px 14px;width:100%}
+textarea{resize:none;line-height:1.5}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ib{width:44px;height:44px;border-radius:var(--r2);display:grid;place-items:center;flex:none;background:var(--s1);border:1px solid var(--bd)}
+.ib:active,.bt:active,nav button:active,.chip:active{transform:scale(.94)}
+.ib,.bt,nav button,.chip{transition:transform .18s var(--out),background-color .2s var(--soft),border-color .2s var(--soft),color .2s var(--soft)}
+header{display:flex;align-items:center;gap:var(--sp2);padding:var(--sp2) var(--sp3) var(--sp1)}
+header .t{flex:1;min-width:0}header h1{margin:0;font-size:26px;font-weight:800;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sub{color:var(--mu);font-size:var(--fs0)}
+.warn{color:var(--dn)}
+#fl{display:flex;gap:var(--sp1);padding:var(--sp1) var(--sp3);overflow-x:auto;flex:none}#fl:empty{display:none}
+.chip{padding:6px 14px;border-radius:99px;background:var(--s1);border:1px solid var(--bd);font-size:13px;color:var(--mu);white-space:nowrap;min-height:34px}
+.chip.on{color:var(--tx);border-color:var(--ac)}
+main{flex:1;overflow-y:auto;padding:var(--sp1) var(--sp3) var(--sp2);display:flex;flex-direction:column;gap:var(--sp1);overscroll-behavior:contain}
+.empty{margin:auto;text-align:center;color:var(--mu);padding:40px 12px;max-width:300px}.empty b{display:block;color:var(--tx);font-size:var(--fs2);margin-bottom:4px}
+/* items */
+.it{display:flex;gap:10px;align-items:flex-start;background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:13px}.it.new{animation:in .4s var(--out)}
+.it.ref{border-inline-start:3px solid var(--ac)}
+.it.done .bd{opacity:.55}.it.done .tt,.it.done .tx{text-decoration:line-through}
+.ck{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--mu);display:grid;place-items:center;flex:none;margin-top:1px;color:transparent;transition:transform .22s var(--spring),background-color .15s,border-color .15s}
+.ck svg{width:13px;height:13px;stroke-width:3}.done .ck{background:var(--ok);border-color:var(--ok);color:#fff;transform:scale(1.08)}
+.bd{flex:1;min-width:0;cursor:pointer}.tt{font-weight:700;margin-bottom:2px;word-break:break-word}
+.tx{white-space:pre-wrap;word-break:break-word;display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden}
+.tx a{color:var(--ac)}
+.mt{display:flex;gap:8px;align-items:center;font-size:var(--fs0);color:var(--mu);margin-top:6px;flex-wrap:wrap}.mt svg{width:13px;height:13px}
+.badge{color:var(--ac);display:inline-flex;gap:3px;align-items:center}
+.pg{height:4px;width:60px;background:var(--s2);border-radius:9px;overflow:hidden}.pg i{display:block;height:100%;background:var(--ac)}
+.gr{display:grid;gap:4px;margin-top:8px;grid-template-columns:repeat(3,1fr)}.gr.n1{grid-template-columns:1fr}.gr.n2{grid-template-columns:1fr 1fr}
+.gr img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;background:var(--s2);cursor:zoom-in}.gr.n1 img{aspect-ratio:auto;max-height:240px}
+.mb{width:36px;height:36px;display:grid;place-items:center;color:var(--mu);flex:none;margin:-4px -6px 0 0}
+@keyframes in{from{opacity:0;transform:translateY(8px)}}
+/* sections */
+.sec{display:flex;gap:12px;align-items:center;background:var(--s1);border:1px solid var(--bd);border-radius:var(--r2);padding:14px;text-align:start;width:100%}
+.sec.on{border-color:var(--ac)}.sec .ico{font-size:24px;width:40px;height:40px;display:grid;place-items:center;background:var(--s2);border-radius:12px;flex:none}
+.sec .bd{cursor:pointer}.sec b{display:block}
+/* composer */
+#cp{padding:var(--sp1) var(--sp3) var(--sp2);border-top:1px solid var(--bd);background:var(--bg)}#cp[hidden]{display:none}
+#ty{display:flex;gap:var(--sp1);margin-bottom:8px}#ty .chip{min-height:30px;padding:3px 13px;font-size:12px}
+#pv{display:flex;gap:6px;overflow-x:auto;margin-bottom:6px}#pv:empty{display:none}
+#pv div{position:relative;flex:none}#pv img{height:52px;width:52px;object-fit:cover;border-radius:10px}
+#pv button{position:absolute;top:-4px;left:-4px;background:var(--dn);color:#fff;border-radius:50%;width:20px;height:20px;display:grid;place-items:center}#pv button svg{width:10px;height:10px}
+.rw{display:flex;gap:2px;align-items:flex-end;background:var(--s1);border:1px solid var(--bd);border-radius:28px;padding:5px;transition:border-color .2s var(--soft),box-shadow .2s var(--soft)}.rw:focus-within{border-color:var(--ac);box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 18%,transparent)}
+#cp .rw .ib{background:transparent;border:0;width:40px;height:40px;color:var(--mu)}#cp #bm[data-v=listening]{background:var(--dn);color:#fff;border-radius:50%}
+#in{max-height:130px;background:transparent;border:0;padding:10px 4px;border-radius:0}#in:focus-visible{outline:none}
+.sd{background:var(--ac);color:var(--on-ac);border-radius:50%;width:44px;height:44px;display:grid;place-items:center;flex:none;transition:transform .22s var(--spring)}.sd:active{transform:scale(.88)}.sd svg{transform:scaleX(-1)}
+#bm[data-v=listening]{background:var(--dn);color:#fff;border-color:var(--dn)}
+/* nav */
+nav{display:flex;border-top:1px solid var(--bd);background:var(--s1);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;padding:9px 0 7px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--mu);min-height:54px;position:relative}
+nav button svg{width:54px;height:30px;padding:5px 17px;border-radius:99px;transition:background-color .25s var(--soft)}nav button.on{color:var(--ac);font-weight:700}nav button.on svg{background:color-mix(in srgb,var(--ac) 18%,transparent)}
+/* sheets */
+dialog{border:0;color:var(--tx);background:var(--bg);padding:var(--sp3);width:min(100vw,680px);max-height:90dvh;overflow:auto;margin:auto auto 0;border-radius:var(--r3) var(--r3) 0 0;padding-bottom:calc(var(--sp3) + env(safe-area-inset-bottom,0px));box-shadow:var(--sh)}
+dialog[open]{animation:sheet .32s var(--out) both}dialog::backdrop{background:#0009;backdrop-filter:blur(3px)}
+@keyframes sheet{from{transform:translateY(100%)}}
+dialog h3{margin:0 0 var(--sp2);font-size:var(--fs2)}dialog::before{content:"";display:block;width:40px;height:4px;border-radius:9px;background:var(--bd);margin:-6px auto 14px}
+.ac{display:flex;flex-direction:column;gap:6px}
+.ac button,.bt{display:flex;gap:10px;align-items:center;padding:12px;border-radius:12px;background:var(--s1);border:1px solid var(--bd);min-height:46px}
+.ac button{justify-content:flex-start}.bt{justify-content:center}.bt.p{background:var(--ac);color:var(--on-ac);font-weight:700;border-color:var(--ac)}.bt.d,.ac .d{color:var(--dn)}
+.ro{display:flex;gap:8px;margin-top:var(--sp2)}.ro>*{flex:1}
+.fd{display:flex;flex-direction:column;gap:6px;margin-bottom:var(--sp2)}.fd label{font-size:13px;color:var(--mu)}
+.sg{display:flex;background:var(--s2);border-radius:10px;padding:2px}.sg button{padding:6px 12px;border-radius:8px;font-size:13px;color:var(--mu);min-height:34px}.sg button.on{background:var(--ac);color:var(--on-ac)}
+.stp{display:flex;gap:8px;align-items:center;padding:6px 0}.stp input[type=text]{padding:6px 10px}
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r2);padding:4px 14px;margin-bottom:var(--sp2)}
+.card h4{font-size:13px;color:var(--mu);margin:10px 0 2px;font-weight:600}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bd);font-size:var(--fs1)}.row:last-child{border:0}
+.sw{width:44px;height:26px;border-radius:99px;background:var(--s2);position:relative;border:1px solid var(--bd);flex:none}.sw::after{content:"";position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;background:var(--mu);transition:right .15s var(--out)}.sw.on{background:var(--ac)}.sw.on::after{right:21px;background:#fff}
+.dot{width:28px;height:28px;border-radius:50%;margin-inline-start:6px;border:2px solid transparent}.dot.on{border-color:var(--tx)}
+.mu{color:var(--mu);font-size:var(--fs0);line-height:1.7}
+#ts{position:fixed;bottom:calc(76px + env(safe-area-inset-bottom,0px));left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none;z-index:50}
+.to{background:var(--tx);color:var(--bg);padding:10px 16px;border-radius:var(--r2);font-size:var(--fs1);display:flex;gap:12px;align-items:center;pointer-events:auto;animation:in .3s var(--out) both;box-shadow:var(--sh)}.to b{color:var(--ac);cursor:pointer;filter:brightness(.7)}
+#lb{background:#000;color:#fff;max-width:none;width:100vw;height:100dvh;max-height:none;border-radius:0;padding:0;overflow:hidden;margin:0}
+#lb img{position:absolute;inset:0;margin:auto;max-width:100%;max-height:86%;transition:transform .12s}
+#lb .bar{position:absolute;top:env(safe-area-inset-top,0px);left:0;right:0;display:flex;gap:8px;padding:10px;z-index:2;justify-content:center}
+#lb button{background:#fff2;border-radius:12px;width:44px;height:44px;display:grid;place-items:center}
+#lb .nv{position:absolute;top:50%;z-index:2;border-radius:50%}#lb::before{display:none}#lb[open]{animation:fade .2s both}@keyframes fade{from{opacity:0}}
+.grp{font-size:12px;font-weight:600;color:var(--mu);margin:10px 4px 0}.grp:first-child{margin-top:2px}.pg.wide{width:100%;margin-top:8px}
+.it{transition:transform .15s var(--out)}.it:active{transform:scale(.992)}
+#st{display:flex;gap:8px;padding:4px var(--sp3) 8px;overflow-x:auto;flex:none;scrollbar-width:none}#st::-webkit-scrollbar{display:none}#st[hidden]{display:none}
+.tab{display:flex;align-items:center;gap:6px;padding:7px 15px;border-radius:99px;background:var(--s1);border:1px solid var(--bd);color:var(--mu);white-space:nowrap;font-size:14px;min-height:40px;transition:background-color .3s var(--soft),color .3s var(--soft),border-color .3s var(--soft),box-shadow .3s var(--soft),transform .18s var(--out)}
+.tab:active{transform:scale(.94)}.tab.on{background:var(--ac);color:var(--on-ac);border-color:var(--ac);font-weight:700;box-shadow:0 6px 18px color-mix(in srgb,var(--ac) 30%,transparent)}.tab.add{padding:7px 12px}
+#mn{transition:opacity .12s var(--soft),transform .12s var(--soft)}#mn.out{opacity:0;transform:translateX(calc(var(--dx,0px)*-1))}#mn.in,.tin{animation:swapIn .34s var(--out) both}
+@keyframes swapIn{from{opacity:0;transform:translateX(var(--dx,0px))}}
+.sd.off{opacity:.35;transform:scale(.92)}
+.ei{width:64px;height:64px;border-radius:22px;background:var(--s2);display:grid;place-items:center;margin:0 auto 12px;color:var(--ac)}.ei svg{width:28px;height:28px}
+/* intro */
+#intro{--ia:#f5b942;position:fixed;inset:0;z-index:100;background:#090b10;color:#fff;overflow:hidden;display:grid;place-content:center;justify-items:center;text-align:center;gap:10px;clip-path:circle(150% at 50% 45%);transition:clip-path .8s cubic-bezier(.76,0,.24,1)}
+#intro.out{clip-path:circle(0% at 50% 45%)}
+#intro .au{position:absolute;inset:-20%;background:radial-gradient(40% 35% at 30% 40%,#f5b94238,transparent 70%),radial-gradient(35% 35% at 72% 62%,#22d3ee26,transparent 70%);animation:drift 6s ease-in-out infinite alternate}
+#intro .mk{position:relative;display:grid;place-items:center}
+#intro .lg{position:relative;width:96px;height:96px;border-radius:30px;background:linear-gradient(145deg,#ffd27a,var(--ia) 55%,#e39a1f);display:grid;place-items:center;overflow:hidden;box-shadow:0 20px 60px #f5b94255,inset 0 1px 0 #fff6;animation:pop .8s cubic-bezier(.2,.85,.25,1.25) both}
+#intro .lg::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,#fff7 50%,transparent 65%);transform:translateX(-120%);animation:shine 1s 1.1s ease-out forwards}
+#intro .rg{position:absolute;inset:0;border-radius:30px;border:1.5px solid #f5b94299;animation:ring 1.8s .5s ease-out infinite}
+#intro svg{width:50px;height:50px;stroke:#2a1c02;fill:#2a1c02;fill-opacity:0;stroke-width:1.8;stroke-dasharray:1;stroke-dashoffset:1;animation:draw .9s .35s ease-out forwards,fillin .4s 1s ease-out forwards}
+#intro b{font-size:50px;line-height:1.15;margin-top:16px;opacity:0;filter:blur(14px);animation:focus .9s .9s var(--out) forwards}
+#intro i{font-style:normal;font-size:14px;font-weight:600;color:var(--ia);letter-spacing:.32em;opacity:0;animation:track 1.1s 1.2s var(--out) forwards}
+#intro span{color:#9aa3b2;opacity:0;animation:rise .7s 1.6s var(--out) forwards}
+#intro .ln{position:absolute;left:0;right:0;margin:auto;bottom:calc(52px + env(safe-area-inset-bottom,0px));width:132px;height:3px;border-radius:9px;background:#ffffff1c;overflow:hidden}
+#intro .ln u{display:block;height:100%;background:var(--ia);transform-origin:right;transform:scaleX(0);animation:fill 2.4s .2s cubic-bezier(.3,.7,.2,1) forwards}
+#intro small{position:absolute;left:0;right:0;bottom:calc(22px + env(safe-area-inset-bottom,0px));color:#6d7686;font-size:12px;opacity:0;animation:rise .6s 1.8s forwards}
+@keyframes pop{from{opacity:0;transform:scale(.55) rotate(-10deg)}}@keyframes draw{to{stroke-dashoffset:0}}@keyframes fillin{to{fill-opacity:1}}@keyframes shine{to{transform:translateX(120%)}}
+@keyframes ring{0%{opacity:.8;transform:scale(1)}100%{opacity:0;transform:scale(1.9)}}@keyframes focus{to{opacity:1;filter:blur(0)}}@keyframes track{from{opacity:0;letter-spacing:.7em}to{opacity:1;letter-spacing:.32em}}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}@keyframes fill{to{transform:scaleX(1)}}@keyframes drift{to{transform:translate(4%,3%) scale(1.1)}}
+@keyframes appIn{from{opacity:0;transform:translateY(10px) scale(.985)}}
+.booted #hd,.booted #st,.booted #fl,.booted #mn,.booted #cp,.booted nav{animation:appIn .6s var(--out) both}.booted #st{animation-delay:.05s}.booted #mn{animation-delay:.1s}.booted #cp{animation-delay:.15s}.booted nav{animation-delay:.2s}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;transition:none!important}}
+#pv .fchip{width:auto!important;min-width:96px;padding:0 10px;font-size:12px;display:flex;align-items:center;gap:6px;border-radius:10px;background:var(--bg2,#1b2029);color:inherit}
+.fl{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.fchip2{font-size:12px;padding:6px 10px}
+.cols{flex-wrap:wrap;align-items:center;gap:10px}.cdot{width:30px;height:30px;min-width:30px;border-radius:50%;border:2px solid #667;padding:0;font-size:13px;color:#889}.cdot.on{outline:2px solid #fff;outline-offset:2px}
+.ap{display:flex;gap:6px;align-items:center;width:100%}.ap audio{flex:1;min-width:0;height:36px}
+#br.recording{width:auto;min-width:68px;padding:0 10px;border-radius:20px;background:#dc2626;color:#fff;font-size:13px;animation:rp 1.2s infinite}@keyframes rp{50%{opacity:.7}}
+#mn.in,.tin{animation:fadeQ .14s ease-out both}@keyframes fadeQ{from{opacity:0}to{opacity:1}}
+button,nav button,.tab,.chip{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+</style>
+</head>
+<body>
+<header id="hd"></header>
+<div id="st" role="tablist" aria-label="الأقسام" hidden></div>
+<div id="fl"></div>
+<main id="mn" aria-live="polite"></main>
+<div id="cp" hidden>
+ <div id="ty" role="group" aria-label="نوع العنصر"></div>
+ <div id="pv"></div>
+ <div class="rw">
+  <button class="ib" id="ba" data-i="plus" aria-label="إرفاق صورة"></button>
+  <textarea id="in" rows="1" placeholder="اكتب شيئًا…" aria-label="اكتب"></textarea>
+  <button class="ib" id="bm" data-i="mic" aria-label="إملاء صوتي" hidden style="display:none"></button>
+  <button class="ib" id="br" aria-label="تسجيل صوتي"></button>
+  <button class="sd" id="bs" data-i="send" aria-label="حفظ"></button>
+ </div>
+</div>
+<nav id="nv" aria-label="التنقل الرئيسي"></nav>
+<div id="ts" role="status"></div>
+<dialog id="sh"></dialog>
+<dialog id="lb"><div class="bar"><button data-i="plus" id="zi" aria-label="تكبير"></button><button data-i="minus" id="zo" aria-label="تصغير"></button><button data-i="x" id="lx" aria-label="إغلاق"></button></div><button class="nv" id="lp" style="right:8px" data-i="right" aria-label="السابقة"></button><button class="nv" id="ln" style="left:8px" data-i="left" aria-label="التالية"></button><img id="li" alt="صورة"></dialog>
+<input type="file" id="fg" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.json,.csv" multiple hidden>
+<input type="file" id="fc" accept="image/*" capture="environment" hidden>
+<input type="file" id="fi" accept=".json,application/json" hidden>
+<div id="intro" aria-hidden="true"><div class="au"></div><div class="mk"><em class="rg"></em><div class="lg"><svg viewBox="0 0 24 24"><path pathLength="1" d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></div></div><b>سريع</b><i>SAREE3</i><span>احفظها قبل لا تنساها.</span><div class="ln"><u></u></div><small>المس للتخطي</small></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+"use strict";
+/* ===================== CONFIG ===================== */
+const D=document,$=s=>D.querySelector(s);
+const CFG={app:'saree3',ver:3,db:'saree3-v3',dbv:1,legacyDb:'quick-notes',defSec:'sec_quick',
+ types:{note:'ملاحظة',task:'مهمة',ref:'ثابت'},
+ defaults:{th:'dark',ac:'amber',enter:matchMedia('(pointer:fine)').matches,vib:true,purge:30,intro:true,sort:'new'}};
+const IC={home:'M4 11l8-7 8 7v9H4zM10 20v-6h4v6',folder:'M3 6h6l2 2h10v11H3z',search:'M11 4a7 7 0 100 14 7 7 0 000-14zM21 21l-5-5',star:'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z',gear:'M4 6h16M4 12h16M4 18h16',check:'M5 12l5 5 9-10',more:'M5 12h.01M12 12h.01M19 12h.01',img:'M4 5h16v14H4zM4 16l5-5 4 4 3-3 4 4M9 9h.01',cam:'M4 8h4l2-3h4l2 3h4v11H4zM12 10a3 3 0 100 6 3 3 0 000-6z',mic:'M12 3a3 3 0 00-3 3v6a3 3 0 006 0V6a3 3 0 00-3-3zM6 11a6 6 0 0012 0M12 17v4',send:'M21 3L3 11l7 3 3 7z',pin:'M12 17v5M8 3h8l-1 7 3 3H6l3-3z',trash:'M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13',x:'M6 6l12 12M18 6L6 18',share:'M12 15V3M7 8l5-5 5 5M5 14v7h14v-7',copy:'M9 9h11v11H9zM5 15V4h11',edit:'M4 20h4L19 9l-4-4L4 16z',left:'M15 5l-7 7 7 7',right:'M9 5l7 7-7 7',plus:'M12 5v14M5 12h14',minus:'M5 12h14',bm:'M7 3h10v18l-5-4-5 4z',restore:'M4 12a8 8 0 108-8M4 4v5h5'};
+
+/* ===================== UTILITIES ===================== */
+const h=(t,p={},...c)=>{const e=D.createElement(t);for(const k in p){const v=p[k];if(k=='class')e.className=v;else if(k.startsWith('on'))e.addEventListener(k.slice(2),v);else if(v!=null&&v!==false)e.setAttribute(k,v===true?'':v)}c.flat().forEach(x=>x!=null&&x!==false&&e.append(x.nodeType?x:D.createTextNode(x)));return e};
+const ic=n=>{const s=D.createElementNS('http://www.w3.org/2000/svg','svg');s.setAttribute('viewBox','0 0 24 24');s.setAttribute('aria-hidden','true');s.innerHTML='<path d="'+IC[n]+'"/>';return s};
+D.querySelectorAll('[data-i]').forEach(e=>e.prepend(ic(e.dataset.i)));
+const uid=p=>(p||'i')+'_'+(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2,10));
+const now=()=>Date.now();
+const vib=()=>{if(S.set.vib&&navigator.vibrate)try{navigator.vibrate(12)}catch(e){}};
+function toast(m,al,fn){const t=h('div',{class:'to'},m,al?h('b',{onclick:()=>{t.remove();fn()}},al):null);$('#ts').append(t);setTimeout(()=>t.remove(),al?6000:2400)}
+async function copy(t){try{await navigator.clipboard.writeText(t);toast('تم النسخ')}catch(e){toast('تعذر النسخ ⚠')}}
+const dayDiff=t=>{const a=new Date();a.setHours(0,0,0,0);return Math.round((a-new Date(t).setHours(0,0,0,0))/864e5)};
+const fmt=t=>{if(!t)return '—';const d=dayDiff(t),tm=new Date(t).toLocaleTimeString('ar',{hour:'numeric',minute:'2-digit'});return d==0?'اليوم '+tm:d==1?'أمس '+tm:new Date(t).toLocaleDateString('ar',{day:'numeric',month:'long',year:'numeric'})};
+const normAr=s=>String(s||'').toLowerCase().replace(/[\u064B-\u065F\u0670\u0640]/g,'').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه');
+function rich(t){const f=D.createDocumentFragment();String(t).split(/(https?:\/\/[^\s]+)/g).forEach(s=>{if(/^https?:\/\//.test(s)){try{const u=new URL(s);f.append(h('a',{href:u.href,target:'_blank',rel:'noopener noreferrer',dir:'ltr',onclick:e=>e.stopPropagation()},s));return}catch(e){}}f.append(s)});return f}
+const b2d=b=>new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.onerror=()=>r(null);f.readAsDataURL(b)});
+
+/* ===================== DATABASE ===================== */
+const DB={h:null,
+ open:()=>new Promise((ok,no)=>{const r=indexedDB.open(CFG.db,CFG.dbv);
+  r.onupgradeneeded=()=>{const d=r.result;/* safe migrations: add stores/indexes only, never drop */
+   if(!d.objectStoreNames.contains('items'))d.createObjectStore('items',{keyPath:'id'});
+   if(!d.objectStoreNames.contains('sections'))d.createObjectStore('sections',{keyPath:'id'});
+   if(!d.objectStoreNames.contains('meta'))d.createObjectStore('meta',{keyPath:'k'})};
+  r.onsuccess=()=>{DB.h=r.result;ok()};r.onerror=()=>no(r.error);r.onblocked=()=>no(new Error('blocked'))}),
+ tx:(st,m,fn)=>new Promise((ok,no)=>{const t=DB.h.transaction(st,m);let q;t.oncomplete=()=>{ok(q&&q.result);if(m==='readwrite'&&window.SAREE3Sync)window.SAREE3Sync.schedule()};t.onerror=t.onabort=()=>no(t.error);q=fn(t.objectStore(st))}),
+ all:st=>DB.tx(st,'readonly',s=>s.getAll()),
+ put:(st,...a)=>DB.tx(st,'readwrite',s=>{a.forEach(x=>s.put(x))}),
+ del:(st,...ids)=>DB.tx(st,'readwrite',s=>{ids.forEach(i=>s.delete(i))}),
+ clear:st=>DB.tx(st,'readwrite',s=>s.clear()),
+ getMeta:async k=>{const r=await DB.tx('meta','readonly',s=>s.get(k));return r&&r.v},
+ setMeta:(k,v)=>DB.put('meta',{k,v})};
+
+/* ===================== DATA / MODELS ===================== */
+const Model={
+ section:(p={})=>{const t=now();return{id:p.id||uid('sec'),name:String(p.name||'قسم جديد').trim()||'قسم جديد',description:String(p.description||''),icon:p.icon||'📁',order:Number.isFinite(+p.order)?+p.order:0,createdAt:+p.createdAt||t,updatedAt:+p.updatedAt||+p.createdAt||t,isDefault:!!p.isDefault}},
+ step:(p={},n=0)=>{const t=now();return{id:p.id||uid('stp'),text:String(p.text||''),done:!!p.done,order:Number.isFinite(+p.order)?+p.order:n,createdAt:+p.createdAt||t,updatedAt:+p.updatedAt||t}},
+ file:p=>p&&(p.blob instanceof Blob||p.path)?{id:p.id||uid('fil'),name:String(p.name||'file'),type:String(p.type||''),size:+p.size||0,blob:p.blob instanceof Blob?p.blob:null,path:p.path||''}:null,
+ fileFrom:f=>Model.file({name:f.name,type:f.type,size:f.size,blob:f}),
+ image:p=>p&&p.full instanceof Blob?{id:p.id||uid('img'),full:p.full,thumb:p.thumb instanceof Blob?p.thumb:p.full}:null,
+ item:(p={})=>{const t=now(),type=CFG.types[p.type]?p.type:'note',done=type=='task'&&!!p.done;
+  return{id:p.id||uid(),type,sectionId:p.sectionId||CFG.defSec,title:String(p.title||''),text:String(p.text||''),done,
+   createdAt:+p.createdAt||t,updatedAt:+p.updatedAt||+p.createdAt||t,completedAt:done?(+p.completedAt||t):null,deletedAt:+p.deletedAt||null,
+   favorite:!!p.favorite,pinned:!!p.pinned,images:(p.images||[]).map(Model.image).filter(Boolean),files:(p.files||[]).map(Model.file).filter(Boolean),color:/^#[0-9a-f]{6}$/i.test(p.color||'')?p.color:'',
+   steps:(p.steps||[]).map((s,n)=>Model.step(s,n)).sort((a,b)=>a.order-b.order),metadata:p.metadata&&typeof p.metadata=='object'?p.metadata:{}}},
+ legacy:async r=>{if(!r||typeof r.id!='string')return null;const ts=+r.ts||now(),images=[];
+  for(const g of(Array.isArray(r.imgs)?r.imgs:[])){try{if(typeof g=='string'&&g.startsWith('data:image/')){const f=await(await fetch(g)).blob();images.push({full:f,thumb:await Media.enc(f,360,.7)||f})}else if(g&&g.f instanceof Blob)images.push({full:g.f,thumb:g.t})}catch(e){}}
+  return Model.item({id:r.id,type:r.kind=='task'?'task':'note',text:r.text,done:r.done,createdAt:ts,updatedAt:+r.upd||ts,completedAt:r.done?(+r.upd||ts):null,deletedAt:+r.del||null,favorite:r.fav,pinned:r.pin,images})}};
+
+/* ===================== STATE ===================== */
+const S={items:[],secs:[],set:{...CFG.defaults},view:'home',secId:CFG.defSec,q:'',f:{type:'',status:'',fav:false,pin:false},ctype:'note',pend:[],pendF:[],mem:false,hf:'',fresh:''};
+const byId=id=>S.items.find(i=>i.id==id),secOf=id=>S.secs.find(s=>s.id==id)||S.secs.find(s=>s.isDefault);
+const upsert=i=>{const n=S.items.findIndex(x=>x.id==i.id);n<0?S.items.push(i):S.items[n]=i};
+const live=()=>S.items.filter(i=>!i.deletedAt);
+
+/* ===================== ACTIONS ===================== */
+/* Data safety: write to IndexedDB first; update state + show success only after the write succeeded. */
+async function commit(items,msg,undo){items=[].concat(items);
+ if(!S.mem){try{await DB.put('items',...items)}catch(e){toast('تعذر الحفظ — لم يتغير شيء ⚠');return false}}
+ items.forEach(upsert);render();
+ if(msg)toast(S.mem?'محفوظ مؤقتًا فقط — التخزين غير متاح ⚠':msg,undo&&'تراجع',undo);return true}
+const patch=(i,p)=>({...i,...p,updatedAt:now()});
+const toggleDone=i=>commit(patch(i,{done:!i.done,completedAt:!i.done?now():null}),!i.done?'انتقلت إلى «المهام المكتملة»':null,!i.done?()=>commit(i):null);
+const toggle=(i,k)=>commit(patch(i,{[k]:!i[k]}));
+function trashItem(i){const prev=i;commit(patch(i,{deletedAt:now()}),'نُقل إلى المحذوفات',()=>commit(prev))}
+async function killItems(a){if(!S.mem){try{await DB.del('items',...a.map(i=>i.id));if(window.SAREE3Sync)await SAREE3Sync.addTombstones(a.map(i=>'item:'+i.id))}catch(e){toast('تعذر الحذف ⚠');return}}
+ a.forEach(i=>{Media.free(i);S.items=S.items.filter(x=>x.id!=i.id)});render();toast('حُذف نهائيًا')}
+async function addItem(){const ta=$('#in'),text=ta.value.trim();if(!text&&!S.pend.length&&!S.pendF.length)return;
+ const it=Model.item({type:S.ctype,sectionId:S.secId,text,images:S.pend,files:S.pendF});
+ S.fresh=it.id;if(await commit(it,'تم الحفظ')){S.pend=[];S.pendF=[];ta.value='';fit();pvRender();vib();const mn=$('#mn');mn.scrollTop=S.set.sort=='old'?mn.scrollHeight:0;ta.focus()}else S.fresh=''}
+const composerSync=()=>{const ta=$('#in');ta.placeholder=({note:'اكتب شيئًا…',task:'ماذا تريد أن تنجز؟',ref:'ما الذي تريد الاحتفاظ به؟'})[S.ctype];$('#bs').classList.toggle('off',!ta.value.trim()&&!S.pend.length&&!S.pendF.length)};
+const fit=()=>{const t=$('#in');t.style.height='auto';t.style.height=Math.min(t.scrollHeight,130)+'px'};
+async function saveSection(sec){const saved={...sec,updatedAt:now()};try{if(!S.mem)await DB.put('sections',saved)}catch(e){toast('تعذر الحفظ ⚠');return false}
+ const n=S.secs.findIndex(s=>s.id==saved.id);n<0?S.secs.push(saved):S.secs[n]=saved;S.secs.sort((a,b)=>a.order-b.order);render();return true}
+async function deleteSection(sec){if(sec.isDefault)return;const moved=S.items.filter(i=>i.sectionId==sec.id).map(i=>patch(i,{sectionId:CFG.defSec}));
+ try{if(!S.mem){await DB.put('items',...moved);await DB.del('sections',sec.id);if(window.SAREE3Sync)await SAREE3Sync.addTombstones(['section:'+sec.id])}}catch(e){toast('تعذر حذف القسم ⚠');return}
+ moved.forEach(upsert);S.secs=S.secs.filter(s=>s.id!=sec.id);if(S.secId==sec.id)S.secId=CFG.defSec;render();toast('حُذف القسم ونُقلت عناصره إلى «سريع»')}
+async function share(i){const d={title:i.title,text:i.text};try{if(navigator.share){await navigator.share(d);return}}catch(e){if(e.name=='AbortError')return}copy([i.title,i.text].filter(Boolean).join('\n'))}
+
+/* ===================== OFFLINE-FIRST CLOUD SYNC ===================== */
+/* ضع رابط مشروع Supabase والمفتاح العام (publishable/anon) هنا مرة واحدة */
+const SB={url:'https://mioilzvovxdeliwkkjty.supabase.co',key:'sb_publishable_FJ5-eOEM4S93wxyz5cGB_w_tzLx3UaP'};
+const Sync={client:null,user:null,busy:false,timer:null,applying:false,ready:false,libPromise:null,
+ status(msg){const el=$('#syncStatus');if(el)el.textContent=msg},
+ cfg:async()=>({url:(await DB.getMeta('sync_url'))||SB.url,key:(await DB.getMeta('sync_key'))||SB.key}),
+ async connect(){if(!window.supabase||!window.supabase.createClient)await Sync.loadLibrary();const c=await Sync.cfg();if(!c.url||!c.key)throw new Error('أدخل رابط مشروع Supabase ومفتاح publishable أو anon أولاً.');Sync.client=window.supabase.createClient(c.url,c.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});const {data,error}=await Sync.client.auth.getSession();if(error)throw error;Sync.user=data.session?.user||null;return Sync.client},
+ async saveConfig(){const url=$('#syncUrl')?.value.trim(),key=$('#syncKey')?.value.trim();if(!url||!key)return toast('أدخل رابط المشروع ومفتاح anon');try{new URL(url)}catch(e){return toast('رابط المشروع غير صحيح')};await DB.setMeta('sync_url',url);await DB.setMeta('sync_key',key);Sync.client=null;toast('تم حفظ إعدادات الاتصال على هذا الجهاز');Sync.status('الاتصال محفوظ؛ سجّل الدخول للمزامنة')},
+ async account(action){try{await Sync.saveConfigSilently();await Sync.connect();const email=$('#syncEmail')?.value.trim(),password=$('#syncPassword')?.value;if(!email||!password)throw new Error('أدخل البريد الإلكتروني وكلمة المرور.');let r;if(action==='signup')r=await Sync.client.auth.signUp({email,password});else r=await Sync.client.auth.signInWithPassword({email,password});if(r.error)throw r.error;Sync.user=r.data.user||r.data.session?.user||null;if(action==='signup'&&!r.data.session){Sync.status('تم إنشاء الحساب؛ افتح بريدك لتأكيده ثم سجّل الدخول');toast('تحقق من بريدك الإلكتروني لتأكيد الحساب');return}if(!Sync.user){const ss=await Sync.client.auth.getSession();Sync.user=ss.data.session?.user||null}if(!Sync.user)throw new Error('لم يتم تسجيل الدخول.');Sync.status('تم تسجيل الدخول؛ جارٍ دمج البيانات…');await Sync.pullMerge();Sync.status('متصل — المزامنة التلقائية مفعّلة');toast('تم تسجيل الدخول ومزامنة البيانات');}catch(e){Sync.status('المزامنة متوقفة: '+(e.message||'خطأ'));toast(e.message||'تعذر الاتصال بالمزامنة')}} ,
+ async saveConfigSilently(){const url=$('#syncUrl')?.value.trim(),key=$('#syncKey')?.value.trim();if(url&&key){try{new URL(url)}catch(e){throw new Error('رابط المشروع غير صحيح')}await DB.setMeta('sync_url',url);await DB.setMeta('sync_key',key);Sync.client=null}},
+ async tombstones(){return (await DB.getMeta('sync_tombstones'))||[]},
+ async addTombstones(ids){const old=await Sync.tombstones();await DB.setMeta('sync_tombstones',[...new Set([...old,...ids])])},
+ async snapshot(){await Sync.upFiles();return {...await Backup.serialize(),syncTombstones:await Sync.tombstones()}},
+ async readRemote(){const {data,error}=await Sync.client.from('saree3_sync').select('payload,updated_at').eq('user_id',Sync.user.id).maybeSingle();if(error)throw new Error(sbMsg(error.message));return data?.payload||null},
+ async mergePayload(remote){if(!remote||!Array.isArray(remote.items))return;const parsed=await Backup.parse(remote);const tombstones=new Set([...(await Sync.tombstones()),...(remote.syncTombstones||[])]);await DB.setMeta('sync_tombstones',[...tombstones]);const localBy=new Map(S.items.filter(i=>!tombstones.has('item:'+i.id)).map(i=>[i.id,i]));for(const ri of parsed.items){if(tombstones.has('item:'+ri.id))continue;const li=localBy.get(ri.id);if(!li||(+ri.updatedAt||0)>(+li.updatedAt||0))localBy.set(ri.id,ri)}
+  const secBy=new Map(S.secs.filter(x=>!tombstones.has('section:'+x.id)).map(x=>[x.id,x]));for(const rs of parsed.sections){if(tombstones.has('section:'+rs.id))continue;const ls=secBy.get(rs.id);if(!ls||(+rs.updatedAt||0)>(+ls.updatedAt||0))secBy.set(rs.id,rs)}
+  const items=[...localBy.values()],secs=[...secBy.values()];if(!secs.some(x=>x.isDefault))secs.unshift(Model.section({id:CFG.defSec,name:'سريع',icon:'⚡',order:-1,isDefault:true}));
+  Sync.applying=true;try{await DB.clear('items');await DB.clear('sections');if(items.length)await DB.put('items',...items);if(secs.length)await DB.put('sections',...secs);S.items=items.map(Model.item);S.secs=secs.map(Model.section).sort((a,b)=>a.order-b.order);render()}finally{Sync.applying=false}},
+ async push(){if(Sync.busy||Sync.applying||!navigator.onLine)return;try{if(!Sync.client||!Sync.user)await Sync.connect();if(!Sync.user)return;Sync.busy=true;Sync.status('جارٍ رفع التغييرات…');const local=await Sync.snapshot(),remote=await Sync.readRemote();if(remote){await Sync.mergePayload(remote)}const merged=await Sync.snapshot();const {error}=await Sync.client.from('saree3_sync').upsert({user_id:Sync.user.id,payload:merged,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error)throw new Error(sbMsg(error.message));Sync.status('متزامن ✓ · '+new Date().toLocaleTimeString('ar',{hour:'2-digit',minute:'2-digit'}))}catch(e){Sync.status(navigator.onLine?'تعذر التزامن؛ ستُعاد المحاولة عند التعديل أو الاتصال':'بدون إنترنت — محفوظ محلياً');console.warn('SAREE3 sync',e)}finally{Sync.busy=false}},
+ async pullMerge(){if(!navigator.onLine)throw new Error('اتصل بالإنترنت أولاً لإعداد الحساب والمزامنة');if(!Sync.client||!Sync.user)await Sync.connect();if(!Sync.user)throw new Error('سجّل الدخول أولاً');const remote=await Sync.readRemote();if(remote)await Sync.mergePayload(remote);const payload=await Sync.snapshot();const {error}=await Sync.client.from('saree3_sync').upsert({user_id:Sync.user.id,payload,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error)throw new Error(sbMsg(error.message));Sync.status('متزامن ✓')},
+ schedule(){if(Sync.applying||!Sync.user)return;clearTimeout(Sync.timer);Sync.timer=setTimeout(()=>Sync.push(),1800)},
+ async loadLibrary(){if(window.supabase&&window.supabase.createClient)return;if(!Sync.libPromise){Sync.libPromise=new Promise((resolve,reject)=>{const s=D.createElement('script');s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';s.onload=()=>window.supabase&&window.supabase.createClient?resolve():reject(new Error('تعذر تحميل مكتبة المزامنة.'));s.onerror=()=>reject(new Error('تعذر تحميل مكتبة المزامنة؛ تحقق من الإنترنت.'));D.head.append(s)}).finally(()=>{Sync.libPromise=null})}return Sync.libPromise},
+ async logout(){try{if(Sync.client)await Sync.client.auth.signOut();Sync.user=null;Sync.status('تم تسجيل الخروج؛ البيانات المحلية باقية')}catch(e){toast('تعذر تسجيل الخروج')}}};
+window.SAREE3Sync=Sync;
+const sbMsg=m=>/saree3_sync/i.test(m||'')&&/schema cache|does not exist|relation/i.test(m||'')?'جدول المزامنة غير موجود بـ Supabase. شغّل ملف saree3-all-in-one.sql بـ SQL Editor مرة وحدة':m;
+const MAXF=20*1048576,BUCKET='saree3-files',fmtSize=n=>n>1048576?(n/1048576).toFixed(1)+' MB':Math.max(1,Math.round(n/1024))+' KB';
+Sync.upFiles=async function(){if(!Sync.client||!Sync.user)return;const ch=new Set();
+ for(const i of S.items)for(const f of i.files){if(f.blob&&!f.path){const p=Sync.user.id+'/'+f.id;
+  const {error}=await Sync.client.storage.from(BUCKET).upload(p,f.blob,{upsert:true,contentType:f.type||'application/octet-stream'});
+  if(error){console.warn('SAREE3 file',error);Sync.status('تعذر رفع ملف: '+error.message);continue}f.path=p;ch.add(i)}}
+ if(ch.size)await DB.put('items',...ch)};
+async function dlFile(f){try{let b=f.blob;if(!b){if(!f.path)throw new Error('الملف غير مرفوع بعد');if(!Sync.client||!Sync.user)await Sync.connect();if(!Sync.user)throw new Error('سجّل الدخول أولاً');
+ const {data,error}=await Sync.client.storage.from(BUCKET).download(f.path);if(error)throw error;b=data;f.blob=b}
+ const a=h('a',{href:URL.createObjectURL(b),download:f.name});D.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4e3)}catch(e){toast('تعذر تنزيل الملف ⚠ '+(e&&e.message||''))}}
+async function getBlob(f){if(f.blob)return f.blob;if(!f.path)throw new Error('الملف غير مرفوع بعد');if(!Sync.client||!Sync.user)await Sync.connect();if(!Sync.user)throw new Error('سجّل الدخول أولاً');
+ const {data,error}=await Sync.client.storage.from(BUCKET).download(f.path);if(error)throw error;f.blob=data;return data}
+async function playF(f,box){try{const b=await getBlob(f),a=h('audio',{src:URL.createObjectURL(b)});a.controls=true;a.onclick=e=>e.stopPropagation();
+ box.replaceChildren(a,h('button',{class:'bt fchip2','aria-label':'تنزيل',onclick:e=>{e.stopPropagation();dlFile(f)}},'⬇'));a.play().catch(()=>{})}catch(e){toast('تعذر التشغيل ⚠ '+(e&&e.message||''))}}
+/* ===== تسجيل صوتي (يُحفظ كمرفق ويتزامن مثل أي ملف) ===== */
+IC.rec='M12 4a8 8 0 100 16 8 8 0 000-16zM12 9a3 3 0 100 6 3 3 0 000-6z';
+const Rec={mr:null,ch:[],st:null,iv:null,t0:0,
+ btn:()=>$('#br'),
+ ui(on){const b=Rec.btn();b.classList.toggle('recording',on);b.setAttribute('aria-label',on?'إيقاف التسجيل':'تسجيل صوتي');if(!on)b.replaceChildren(ic('mic'))},
+ async start(){if(Rec.mr)return Rec.stop();if(Rec.busy)return;
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia||!window.MediaRecorder)return toast(window.isSecureContext?'هذا المتصفح لا يدعم التسجيل ⚠':'التسجيل يحتاج رابط https ⚠');
+  Rec.busy=true;let st;
+  try{st=await navigator.mediaDevices.getUserMedia({audio:true})}catch(e){Rec.busy=false;return Rec.denied(e)}
+  Rec.busy=false;Rec.st=st;
+  try{const mt=['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg'].find(t=>MediaRecorder.isTypeSupported(t))||'';
+   Rec.ch=[];const mr=new MediaRecorder(st,mt?{mimeType:mt}:{});
+   mr.ondataavailable=e=>{if(e.data&&e.data.size)Rec.ch.push(e.data)};
+   mr.onerror=()=>Rec.fail(new Error('MediaRecorder'));
+   mr.onstop=()=>{clearInterval(Rec.iv);st.getTracks().forEach(t=>t.stop());const type=(mr.mimeType||mt||'audio/webm').split(';')[0],ext=type.includes('mp4')?'m4a':type.includes('ogg')?'ogg':'webm',b=new Blob(Rec.ch,{type});Rec.mr=null;Rec.ui(false);
+    if(!b.size)return toast('التسجيل فارغ ⚠');if(b.size>MAXF)return toast('التسجيل أكبر من 20 ميغا ⚠');
+    const d=new Date(),name='تسجيل '+d.getHours()+'-'+String(d.getMinutes()).padStart(2,'0')+'.'+ext;
+    S.pendF.push(Model.fileFrom(new File([b],name,{type})));pvRender();toast('تم التسجيل 🎙 اضغط حفظ')};
+   mr.start(1000);Rec.mr=mr;Rec.t0=Date.now();Rec.ui(true);
+   const tick=()=>{const s=Math.floor((Date.now()-Rec.t0)/1000);Rec.btn().textContent='⏹ '+Math.floor(s/60)+':'+String(s%60).padStart(2,'0');if(s>=600)Rec.stop()};tick();Rec.iv=setInterval(tick,500)
+  }catch(e){Rec.fail(e)}},
+ fail(e){clearInterval(Rec.iv);try{Rec.st&&Rec.st.getTracks().forEach(t=>t.stop())}catch(x){}Rec.mr=null;Rec.busy=false;Rec.ui(false);toast('تعذر التسجيل ⚠ '+(e&&(e.name||e.message)||''))},
+ stop(){try{Rec.mr&&Rec.mr.state!='inactive'&&Rec.mr.stop()}catch(e){Rec.mr=null;Rec.ui(false)}}};
+Rec.denied=e=>{const n=(e&&e.name)||'';
+ if(n=='NotAllowedError'||n=='SecurityError'||n=='PermissionDeniedError')return Sheet.open(h('h3',{},'الميكروفون غير مسموح'),h('div',{class:'mu'},'اضغط «إعادة المحاولة» واختر «سماح». إذا ما ظهر سؤال: اضغط 🔒 بجنب الرابط ثم الأذونات ثم المايكروفون ثم سماح. وتأكد من إذن المايك للمتصفح من إعدادات الجهاز.'),
+  h('div',{class:'ro'},h('button',{class:'bt p',onclick:()=>{Sheet.close();Rec.start()}},'إعادة المحاولة'),h('button',{class:'bt',onclick:Sheet.close},'إلغاء')));
+ toast(n=='NotFoundError'||n=='DevicesNotFoundError'?'ما لكيت مايكروفون ⚠':n=='NotReadableError'||n=='AbortError'?'المايك مشغول بتطبيق آخر ⚠ سكّر المكالمات أو أي تسجيل وجرب':'تعذر فتح المايك ⚠ '+n)};
+$('#br').append(ic('mic'));$('#br').onclick=()=>Rec.start();
+addEventListener('online',()=>{Sync.status('عاد الإنترنت — جارٍ استعادة الاتصال…');Sync.connect().then(()=>{if(Sync.user)return Sync.pullMerge()}).then(()=>{if(Sync.user)Sync.status('متصل — المزامنة مفعّلة')}).catch(()=>Sync.status('الإنترنت متاح؛ افتح الإعدادات وسجّل الدخول إذا لزم'))});
+addEventListener('offline',()=>Sync.status('بدون إنترنت — التغييرات محفوظة محلياً'));
+
+/* ===================== SEARCH ===================== */
+const Search={
+ hay:i=>normAr([i.title,i.text,secOf(i.sectionId).name,CFG.types[i.type],...i.steps.map(s=>s.text)].join(' ')),
+ filt:{type:i=>!S.f.type||i.type==S.f.type,status:i=>!S.f.status||(S.f.status=='done'?i.done:i.type=='task'&&!i.done),fav:i=>!S.f.fav||i.favorite,pin:i=>!S.f.pin||i.pinned},
+ run(base){const toks=normAr(S.q).split(/\s+/).filter(Boolean);
+  return base.filter(i=>Object.values(Search.filt).every(f=>f(i))&&(!toks.length||(h=>toks.every(t=>h.includes(t)))(Search.hay(i))))},
+ sort:(a,b)=>(+b.pinned)-(+a.pinned)||(S.set.sort=='old'?a.createdAt-b.createdAt:b.createdAt-a.createdAt)};
+
+/* ===================== MEDIA ===================== */
+const Media={urls:new Map(),
+ url(b){let u=Media.urls.get(b);if(!u){u=URL.createObjectURL(b);Media.urls.set(b,u)}return u},
+ free(i){i.images.forEach(g=>[g.full,g.thumb].forEach(b=>{const u=Media.urls.get(b);if(u){URL.revokeObjectURL(u);Media.urls.delete(b)}}))},
+ async enc(src,max,q){const bm=src instanceof Blob?await createImageBitmap(src):src,k=Math.min(1,max/Math.max(bm.width,bm.height)),c=D.createElement('canvas');c.width=Math.round(bm.width*k);c.height=Math.round(bm.height*k);c.getContext('2d').drawImage(bm,0,0,c.width,c.height);if(src instanceof Blob&&bm.close)bm.close();
+  let b=await new Promise(r=>c.toBlob(r,'image/webp',q));if(!b||b.type!='image/webp')b=await new Promise(r=>c.toBlob(r,'image/jpeg',q));return b},
+ async make(f){try{const bm=await createImageBitmap(f),full=await Media.enc(bm,1500,.85),thumb=await Media.enc(bm,360,.7);bm.close&&bm.close();return Model.image({full,thumb})}catch(e){toast('تعذر قراءة الصورة ⚠');return null}},
+ async pick(files){const out=[];for(const f of files){const g=await Media.make(f);if(g)out.push(g)}return out}};
+const pvDraw=()=>$('#pv').replaceChildren(...S.pend.map((g,n)=>h('div',{},h('img',{src:Media.url(g.thumb),alt:'معاينة'}),h('button',{'aria-label':'إزالة الصورة',onclick:()=>{S.pend.splice(n,1);pvRender()}},ic('x')))),...S.pendF.map((f,n)=>h('div',{class:'fchip'},'📎 '+f.name.slice(0,18),h('button',{'aria-label':'إزالة الملف',onclick:()=>{S.pendF.splice(n,1);pvRender()}},ic('x')))));
+const pvRender=()=>{pvDraw();composerSync()};
+const LB={a:[],n:0,z:1,show(){$('#li').src=Media.url(LB.a[LB.n].full);$('#li').style.transform='scale('+LB.z+')';$('#lp').hidden=$('#ln').hidden=LB.a.length<2},
+ open(a,n){LB.a=a;LB.n=n;LB.z=1;LB.show();Back.push();$('#lb').showModal()},go(d){LB.n=(LB.n+d+LB.a.length)%LB.a.length;LB.z=1;LB.show()},zoom(d){LB.z=Math.max(1,Math.min(5,LB.z+d));LB.show()}};
+
+/* ===================== VOICE ===================== */
+const Voice={SR:window.SpeechRecognition||window.webkitSpeechRecognition,rec:null,state:'idle',
+ set(s){Voice.state=s;$('#bm').dataset.v=s},
+ start(){if(!Voice.SR)return toast('الإملاء الصوتي غير مدعوم في هذا المتصفح');
+  try{const r=Voice.rec=new Voice.SR();r.lang='ar';r.interimResults=false;
+   r.onstart=()=>Voice.set('listening');
+   r.onresult=e=>{const t=$('#in'),x=e.results[0][0].transcript;t.value+=(t.value?' ':'')+x;fit();t.focus()};/* result returns to composer for review */
+   r.onerror=e=>{Voice.set('error');toast(e.error=='not-allowed'?'اسمح بالوصول إلى الميكروفون ⚠':'تعذر الإملاء الصوتي ⚠')};
+   r.onend=()=>Voice.set('idle');r.start()}catch(e){Voice.set('error');toast('تعذر بدء الإملاء ⚠')}},
+ stop(){try{Voice.rec&&Voice.rec.stop()}catch(e){}Voice.set('idle')},
+ toggle(){Voice.state=='listening'?Voice.stop():Voice.start()}};
+
+/* ===================== BACKUP ===================== */
+const Backup={
+ async serialize(){const items=await Promise.all(S.items.map(async i=>({...i,files:i.files.map(f=>({id:f.id,name:f.name,type:f.type,size:f.size,path:f.path})),images:(await Promise.all(i.images.map(async g=>({id:g.id,full:await b2d(g.full),thumb:await b2d(g.thumb)})))).filter(g=>g.full)})));
+  return{app:CFG.app,version:CFG.ver,exportedAt:now(),settings:S.set,sections:S.secs,items}},
+ async fromDataUrl(g){try{return Model.image({id:g.id,full:await(await fetch(g.full)).blob(),thumb:g.thumb?await(await fetch(g.thumb)).blob():null})}catch(e){return null}},
+ async parse(o){if(!o||!Array.isArray(o.items))throw new Error('bad');
+  if(o.app==CFG.app&&o.version>=3){const items=[];for(const r of o.items){if(!r||typeof r.id!='string')continue;const images=(await Promise.all((r.images||[]).map(Backup.fromDataUrl))).filter(Boolean);items.push(Model.item({...r,images}))}
+   return{items,sections:(o.sections||[]).map(Model.section),settings:o.settings}}
+  const items=(await Promise.all(o.items.map(Model.legacy))).filter(Boolean);return{items,sections:[],settings:null}},/* legacy v2 adapter */
+ async download(){try{const b=new Blob([JSON.stringify(await Backup.serialize())],{type:'application/json'});const a=h('a',{href:URL.createObjectURL(b),download:'saree3-backup-'+new Date().toISOString().slice(0,10)+'.json'});D.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4e3);toast('تم تصدير النسخة الاحتياطية')}catch(e){toast('فشل التصدير ⚠')}},
+ async apply(p,mode){try{toast('جارٍ الاستيراد…');let items=p.items,secs=p.sections;
+  const known=new Set(S.secs.map(s=>s.id)),extra=secs.filter(s=>!s.isDefault&&(mode=='replace'||!known.has(s.id)));
+  const have=new Set(extra.map(s=>s.id).concat(S.secs.map(s=>s.id)));items=items.map(i=>have.has(i.sectionId)||i.sectionId==CFG.defSec?i:{...i,sectionId:CFG.defSec});
+  if(mode=='replace'){if(!S.mem){await DB.clear('items');await DB.clear('sections');await DB.put('sections',...[S.secs.find(s=>s.isDefault),...extra]);await DB.put('items',...items)}S.items.forEach(Media.free);S.items=items;S.secs=[S.secs.find(s=>s.isDefault),...extra]}
+  else{const ids=new Set(S.items.map(i=>i.id));items=items.filter(i=>!ids.has(i.id));if(!S.mem){if(extra.length)await DB.put('sections',...extra);await DB.put('items',...items)}S.items.push(...items);S.secs.push(...extra)}
+  S.secs.sort((a,b)=>a.order-b.order);render();toast('تم استيراد '+items.length+' عنصر')}catch(e){toast('فشل الاستيراد — بياناتك الحالية سليمة ⚠')}}};
+
+/* ===================== UI (components) ===================== */
+const Sheet={d:$('#sh'),open(...n){Sheet.d.replaceChildren(...n);if(!Sheet.d.open){Back.push();Sheet.d.showModal()}},close(){Sheet.d.close()},
+ menu(rows){Sheet.open(h('div',{class:'ac'},rows.filter(Boolean).map(([l,i,f,c])=>h('button',{class:c||'',onclick:()=>{Sheet.close();f()}},ic(i),l))))},
+ confirm(msg,label,fn){Sheet.open(h('h3',{},msg),h('div',{class:'ro'},h('button',{class:'bt d',onclick:()=>{Sheet.close();fn()}},label),h('button',{class:'bt',onclick:Sheet.close},'إلغاء')))}};
+Sheet.d.addEventListener('click',e=>{if(e.target!==Sheet.d)return;const r=Sheet.d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)Sheet.close()});
+/* Android back button / history: closes the top dialog instead of leaving the app */
+const Back={skip:false,pop:false,push(){try{history.pushState({dlg:1},'')}catch(e){}},
+ closed(){if(Back.pop)return;if(history.state&&history.state.dlg){Back.skip=true;try{history.back()}catch(e){Back.skip=false}}},
+ init(){addEventListener('popstate',()=>{if(Back.skip){Back.skip=false;return}const top=$('#lb').open?$('#lb'):Sheet.d.open?Sheet.d:null;if(top){Back.pop=true;top.close();Back.pop=false}});[Sheet.d,$('#lb')].forEach(d=>d.addEventListener('close',Back.closed))}};
+const seg=(opts,cur,fn)=>h('div',{class:'sg'},opts.map(([v,t])=>h('button',{class:cur===v?'on':'',type:'button',onclick:e=>{fn(v);[...e.currentTarget.parentNode.children].forEach(b=>b.classList.remove('on'));e.currentTarget.classList.add('on')}},t)));
+const stat=s=>{const A=S.items.filter(i=>!i.deletedAt&&i.sectionId==s.id);return A.length+' عنصر · '+A.filter(i=>i.type=='task'&&!i.done).length+' مهام مفتوحة'};
+
+/* ===================== VIEWS ===================== */
+function itemRow(i){const prog=i.steps.length?i.steps.filter(s=>s.done).length:0,ctx=S.view!='home'&&S.view!='trash'?secOf(i.sectionId):null;
+ return h('div',{class:'it '+i.type+(i.done?' done':'')+(i.id==S.fresh?' new':''),role:'listitem'},
+  i.type=='task'?h('button',{class:'ck','aria-label':'إكمال المهمة','aria-pressed':String(i.done),onclick:()=>{vib();toggleDone(i)}},ic('check')):null,
+  h('div',{class:'bd',tabindex:0,role:'button','aria-label':'فتح التفاصيل',onclick:()=>details(i.id),onkeydown:e=>{if(e.key=='Enter')details(i.id)}},
+   i.title?h('div',{class:'tt',style:i.color?'color:'+i.color:''},i.title):null,i.text?h('div',{class:'tx',style:i.color?'color:'+i.color:''},rich(i.text)):null,
+   i.images.length?h('div',{class:'gr n'+Math.min(i.images.length,3)},i.images.slice(0,3).map((g,n)=>h('img',{src:Media.url(g.thumb),loading:'lazy',decoding:'async',alt:'صورة',onclick:e=>{e.stopPropagation();LB.open(i.images,n)}}))):null,
+   i.files.length?h('div',{class:'fl'},i.files.map(f=>f.type.startsWith('audio/')?h('div',{class:'ap'},h('button',{class:'bt fchip2',onclick:e=>{e.stopPropagation();playF(f,e.currentTarget.parentNode)}},'▶ '+f.name.slice(0,18)+' · '+fmtSize(f.size)),h('button',{class:'bt fchip2','aria-label':'تنزيل',onclick:e=>{e.stopPropagation();dlFile(f)}},'⬇')):h('button',{class:'bt fchip2',onclick:e=>{e.stopPropagation();dlFile(f)}},'⬇ '+f.name.slice(0,22)+' · '+fmtSize(f.size)))):null,
+   h('div',{class:'mt'},i.type=='ref'?h('span',{class:'badge'},ic('bm'),'ثابت'):null,
+    i.steps.length?[h('span',{},prog+' / '+i.steps.length),h('span',{class:'pg'},h('i',{style:'width:'+Math.round(prog/i.steps.length*100)+'%'}))]:null,
+    ctx?h('span',{},ctx.icon+' '+ctx.name):null,h('span',{},fmt(i.createdAt)),i.favorite?ic('star'):null,i.pinned?ic('pin'):null)),
+  h('button',{class:'mb','aria-label':'خيارات',onclick:()=>itemMenu(i)},ic('more')))}
+function itemMenu(i){const T=Object.entries(CFG.types).filter(([k])=>k!=i.type).map(([k,l])=>['تحويل إلى '+l,'edit',()=>commit(patch(i,{type:k,done:false,completedAt:null}),'تم التحويل')]);
+Sheet.menu([['فتح التفاصيل','edit',()=>details(i.id)],[i.pinned?'إلغاء التثبيت':'تثبيت','pin',()=>toggle(i,'pinned')],[i.favorite?'إزالة من المفضلة':'مفضلة','star',()=>toggle(i,'favorite')],['نقل إلى قسم','folder',()=>moveMenu(i)],...T,
+ ['تكرار','copy',()=>commit(Model.item({...i,id:uid(),createdAt:now(),updatedAt:now(),completedAt:null,done:false,pinned:false,steps:i.steps.map(s=>({...s,id:uid('stp'),done:false}))}),'تم التكرار')],
+ ['نسخ النص','copy',()=>copy([i.title,i.text].filter(Boolean).join('\n'))],navigator.share?['مشاركة','share',()=>share(i)]:null,['حذف','trash',()=>trashItem(i),'d']])}
+const moveMenu=i=>{const o=S.secs.filter(s=>s.id!=i.sectionId);if(!o.length)return toast('لا توجد أقسام أخرى — أنشئ قسمًا أولًا');Sheet.menu(o.map(s=>[s.icon+' '+s.name,'folder',()=>commit(patch(i,{sectionId:s.id}),'تم النقل')]))};
+function homeMenu(){const sec=secOf(S.secId),dn=live().filter(i=>i.sectionId==sec.id&&i.type=='task'&&i.done);
+Sheet.menu([...S.secs.filter(s=>s.id!=sec.id).map(s=>[s.icon+' '+s.name,'folder',()=>switchSec(s.id)]),['✅ المهام المكتملة','check',()=>go('done')],['قسم جديد','plus',()=>sectionForm()],dn.length?['حذف المهام المكتملة ('+dn.length+')','trash',()=>Sheet.confirm('نقل '+dn.length+' مهمة مكتملة إلى المحذوفات؟','نقل',()=>commit(dn.map(i=>patch(i,{deletedAt:now()})),'نُقلت المهام المكتملة إلى المحذوفات')),'d']:null])}
+const secProg=sec=>{const t=live().filter(i=>i.sectionId==sec.id&&i.type=='task');if(!t.length)return null;const d=t.filter(i=>i.done).length;return h('div',{class:'pg wide','aria-label':'تقدم المهام'},h('i',{style:'width:'+Math.round(d/t.length*100)+'%'}))};
+const empty=(a,b,i)=>h('div',{class:'empty'},h('div',{class:'ei'},ic(i||'bm')),h('b',{},a),b);
+const grpOf=i=>{if(i.pinned)return 'مثبتة';const d=dayDiff(i.createdAt);return d==0?'اليوم':d==1?'أمس':d<7?'هذا الأسبوع':'أقدم'};
+function listInto(m,L,emptyMsg,grouped){m.setAttribute('role','list');if(!L.length)return m.append(emptyMsg);let g='';L.forEach(i=>{if(grouped){const k=grpOf(i);if(k!=g){g=k;m.append(h('div',{class:'grp'},k))}}m.append(itemRow(i))})}
+const Views={
+ home(m){const sec=secOf(S.secId),A=live().filter(i=>i.sectionId==sec.id&&!(i.type=='task'&&i.done)),L=A.filter(i=>!S.hf||i.type==S.hf).sort(Search.sort);listInto(m,L,A.length?empty('لا عناصر من هذا النوع','غيّر الفلتر أو أضف عنصرًا جديدًا.'):empty('هذا القسم فارغ','اكتب أول عنصر في الأسفل — ملاحظة أو مهمة أو شيء ثابت.'),true)},
+ done(m){const L=live().filter(i=>i.type=='task'&&i.done).sort((a,b)=>(b.completedAt||0)-(a.completedAt||0));
+  m.append(h('div',{class:'ro'},h('button',{class:'bt',onclick:()=>go('sections')},'رجوع')));listInto(m,L,empty('لا مهام مكتملة بعد','المهام التي تكملها تظهر هنا. اضغط دائرة المهمة لإرجاعها.','check'),false)},
+ sections(m){m.append(h('button',{class:'bt p',onclick:()=>sectionForm()},ic('plus'),'قسم جديد'));m.append(h('button',{class:'bt',style:'width:100%;margin:8px 0',onclick:()=>go('done')},'✅ المهام المكتملة ('+live().filter(i=>i.type=='task'&&i.done).length+')'));
+  S.secs.forEach(s=>m.append(h('div',{class:'sec'+(s.id==S.secId?' on':'')},h('div',{class:'ico'},s.icon),
+   h('div',{class:'bd',tabindex:0,role:'button',onclick:()=>openSec(s.id),onkeydown:e=>{if(e.key=='Enter')openSec(s.id)}},h('b',{},s.name),h('span',{class:'sub'},s.description||stat(s)),s.description?h('div',{class:'sub'},stat(s)):null),
+   h('button',{class:'mb','aria-label':'خيارات القسم',onclick:()=>Sheet.menu([['تعديل القسم','edit',()=>sectionForm(s)],...secMoves(s),s.isDefault?null:['حذف القسم','trash',()=>Sheet.confirm('حذف «'+s.name+'»؟ ستنتقل عناصره إلى «سريع».','حذف',()=>deleteSection(s)),'d']])},ic('more')))))},
+ search(m){const L=Search.run(live()).sort(Search.sort);m.setAttribute('role','list');
+  if(!S.q&&!S.f.type&&!S.f.status&&!S.f.fav&&!S.f.pin&&!L.length)return m.append(empty('ابحث في كل شيء','النص والعنوان والخطوات واسم القسم.'));
+  listInto(m,L,empty('لا نتائج','جرّب كلمة أخرى أو أزل الفلاتر.'))},
+ fav(m){const L=live().filter(i=>i.favorite).sort(Search.sort);listInto(m,L,empty('لا مفضلة بعد','افتح خيارات أي عنصر واختر «مفضلة».'))},
+ trash(m){const T=S.items.filter(i=>i.deletedAt).sort((a,b)=>b.deletedAt-a.deletedAt);
+  m.append(h('div',{class:'ro'},h('button',{class:'bt',onclick:()=>{S.view='settings';render()}},'رجوع'),T.length?h('button',{class:'bt',onclick:()=>commit(T.map(i=>patch(i,{deletedAt:null})),'تمت استعادة الكل')},'استعادة الكل'):null,T.length?h('button',{class:'bt d',onclick:()=>Sheet.confirm('حذف كل المحذوفات نهائيًا؟','حذف الكل',()=>killItems(T))},'حذف الكل'):null));
+  if(!T.length)m.append(empty('المحذوفات فارغة','العناصر المحذوفة تبقى هنا حتى تحذفها نهائيًا.'));
+  T.forEach(i=>m.append(h('div',{class:'it'},h('div',{class:'bd'},h('div',{class:'tx'},i.title||i.text||'🖼️ صورة'),h('div',{class:'mt'},'حُذف '+fmt(i.deletedAt))),
+   h('button',{class:'mb','aria-label':'استعادة',onclick:()=>commit(patch(i,{deletedAt:null}),'تمت الاستعادة')},ic('restore')),
+   h('button',{class:'mb','aria-label':'حذف نهائي',onclick:()=>Sheet.confirm('حذف نهائي؟','حذف',()=>killItems([i]))},ic('trash')))))},
+ settings(m){const A=live(),tk=A.filter(i=>i.type=='task'),imgs=S.items.reduce((n,i)=>n+i.images.length,0);
+  const save=()=>{if(!S.mem)DB.setMeta('settings',S.set).catch(()=>toast('تعذر حفظ الإعدادات ⚠'));Theme.apply()};
+  const row=(l,c)=>h('div',{class:'row'},h('span',{},l),c),
+   tg=(l,k)=>row(l,h('button',{class:'sw'+(S.set[k]?' on':''),role:'switch','aria-checked':String(!!S.set[k]),'aria-label':l,onclick:e=>{S.set[k]=!S.set[k];e.currentTarget.classList.toggle('on');e.currentTarget.setAttribute('aria-checked',String(!!S.set[k]));save()}}));
+  m.append(h('div',{class:'card'},h('h4',{},'المظهر'),row('الوضع',seg([['dark','داكن'],['light','فاتح'],['system','النظام']],S.set.th,v=>{S.set.th=v;save()})),
+   row('اللون',h('div',{},['amber','cyan','violet','green','rose'].map(c=>h('button',{class:'dot'+(S.set.ac==c?' on':''),'aria-label':c,style:'background:'+({amber:'#f5b942',cyan:'#22d3ee',violet:'#a78bfa',green:'#4ade80',rose:'#fb7185'})[c],onclick:()=>{S.set.ac=c;save();render()}})))),
+   h('h4',{},'السلوك'),tg('Enter للحفظ (Shift+Enter سطر جديد)','enter'),tg('اهتزاز خفيف','vib'),tg('عرض المقدمة عند فتح التطبيق','intro'),row('ترتيب العناصر',seg([['new','الأحدث أولًا'],['old','الأقدم أولًا']],S.set.sort,v=>{S.set.sort=v;save()})),
+   h('h4',{},'المحذوفات'),row('حذف تلقائي بعد',seg([[7,'7 أيام'],[30,'30 يومًا'],[0,'أبدًا']],S.set.purge,v=>{S.set.purge=v;save()})),
+   h('div',{class:'row'},h('button',{class:'bt',style:'width:100%',onclick:()=>{S.view='trash';render()}},ic('trash'),'فتح المحذوفات ('+S.items.filter(i=>i.deletedAt).length+')')),
+   h('h4',{},'النسخ الاحتياطي'),h('div',{class:'row'},h('button',{class:'bt p',style:'flex:1',onclick:Backup.download},'تصدير JSON'),h('button',{class:'bt',style:'flex:1',onclick:()=>$('#fi').click()},'استيراد')),
+   h('h4',{},'المزامنة بين الأجهزة'),h('div',{class:'mu',style:'padding:4px 0 10px'},'تُحفظ التغييرات محليًا أولًا. بعد إعداد Supabase وتسجيل الدخول، تتزامن البيانات عند توفر الإنترنت.'),
+    h('div',{class:'fd'},h('label',{},'رابط مشروع Supabase'),h('input',{id:'syncUrl',type:'url',placeholder:'https://xxxx.supabase.co'})),
+    h('div',{class:'fd'},h('label',{},'مفتاح anon / publishable'),h('input',{id:'syncKey',type:'text',placeholder:'مفتاح المشروع العام'})),
+    h('div',{class:'ro'},h('button',{class:'bt',style:'flex:1',onclick:()=>Sync.saveConfig()},'حفظ إعدادات الاتصال'),h('button',{class:'bt',style:'flex:1',onclick:()=>Sync.pullMerge().then(()=>toast('اكتملت المزامنة')).catch(e=>toast(e.message))},'مزامنة الآن')),
+    h('div',{class:'fd'},h('label',{},'البريد الإلكتروني'),h('input',{id:'syncEmail',type:'email',autocomplete:'email',placeholder:'بريدك الإلكتروني'})),
+    h('div',{class:'fd'},h('label',{},'كلمة مرور حساب المزامنة'),h('input',{id:'syncPassword',type:'password',autocomplete:'current-password',placeholder:'8 أحرف أو أكثر'})),
+    h('div',{class:'ro'},h('button',{class:'bt p',style:'flex:1',onclick:()=>Sync.account('login')},'تسجيل الدخول'),h('button',{class:'bt',style:'flex:1',onclick:()=>Sync.account('signup')},'إنشاء حساب'),h('button',{class:'bt',onclick:()=>Sync.logout()},'خروج')),
+    h('div',{id:'syncStatus',class:'mu',style:'padding:6px 0 10px'},navigator.onLine?'غير مفعّل — أدخل إعدادات Supabase':'بدون إنترنت — البيانات محفوظة محلياً'),
+    h('div',{class:'mu',style:'padding:0 0 10px'},'تنبيه: المزامنة السحابية تحتاج إعداد مشروع Supabase مرة واحدة. لا تضع مفتاح service_role هنا؛ استخدم anon/publishable فقط.'),
+    h('h4',{},'الإحصائيات'),h('div',{class:'mu',style:'padding:6px 0'},'العناصر: '+A.length+' · الأقسام: '+S.secs.length+' · الصور: '+imgs+' · مهام مفتوحة: '+tk.filter(i=>!i.done).length+' · مكتملة: '+tk.filter(i=>i.done).length),
+   h('div',{class:'mu',style:'padding:6px 0 10px'},'سريع · SAREE3 3.2 · '+(S.mem?'⚠ التخزين المحلي غير متاح':'التخزين المحلي يعمل'))));
+   Promise.all([DB.getMeta('sync_url'),DB.getMeta('sync_key')]).then(([url,key])=>{if($('#syncUrl')&&!$('#syncUrl').value)$('#syncUrl').value=url||'';if($('#syncKey')&&!$('#syncKey').value)$('#syncKey').value=key||''}).catch(()=>{});
+  }};
+
+/* ===================== RENDER ===================== */
+const NAV=[['home','home','الرئيسية'],['sections','folder','الأقسام'],['search','search','بحث'],['fav','star','المفضلة'],['settings','gear','الإعدادات']];
+const reduced=()=>matchMedia('(prefers-reduced-motion:reduce)').matches;
+/* Smooth transitions: old content slides/fades out, new content slides in from the side of the destination (RTL-aware). */
+const Nav={tok:0,cl:0,to(fn,dir=1){const m=$('#mn'),t=++Nav.tok;if(reduced()){fn();return}
+  D.documentElement.style.setProperty('--dx',(-dir*16)+'px');
+  requestAnimationFrame(()=>{if(t!=Nav.tok)return;m.scrollTop=0;fn();m.classList.remove('in');void m.offsetWidth;m.classList.add('in');clearTimeout(Nav.cl);Nav.cl=setTimeout(()=>m.classList.remove('in'),200)})}};
+const NAVORD=NAV.map(n=>n[0]);
+function go(v){const cur=S.view=='trash'?'settings':S.view;if(v==cur&&v=='home'){$('#mn').scrollTo({top:0,behavior:reduced()?'auto':'smooth'});return}
+ Nav.to(()=>{S.view=v;if(v!='search'){S.q='';S.f={type:'',status:'',fav:false,pin:false}}render()},Math.sign(NAVORD.indexOf(v)-NAVORD.indexOf(cur))||1)}
+function switchSec(id){if(id==S.secId)return;const a=S.secs.findIndex(x=>x.id==S.secId),b=S.secs.findIndex(x=>x.id==id);Nav.to(()=>{S.secId=id;S.hf='';render()},Math.sign(b-a)||1)}
+function openSec(id){Nav.to(()=>{S.secId=id;S.view='home';S.hf='';render()},-1)}
+function tabs(){const box=$('#st');if(S.view!='home'){box.hidden=true;return}box.hidden=false;const key=S.secs.map(x=>x.id+x.name+x.icon).join('|');
+ if(box.dataset.key!=key){box.dataset.key=key;box.replaceChildren(...S.secs.map(sc=>h('button',{class:'tab',role:'tab','data-id':sc.id,onclick:()=>{vib();switchSec(sc.id)}},h('span',{},sc.icon),sc.name)),h('button',{class:'tab add','aria-label':'قسم جديد',onclick:()=>sectionForm()},ic('plus')))}
+ box.querySelectorAll('.tab[data-id]').forEach(b=>{const on=b.dataset.id==S.secId;b.classList.toggle('on',on);b.setAttribute('aria-selected',String(on))});
+ if(box.dataset.cur!=S.secId){box.dataset.cur=S.secId;const a=box.querySelector('.tab.on');a&&a.scrollIntoView({inline:'center',block:'nearest',behavior:reduced()?'auto':'smooth'})}}
+const Swipe={x:0,y:0,t:0,init(){const m=$('#mn');
+ m.addEventListener('touchstart',e=>{if(S.view!='home'||e.touches.length!=1){Swipe.t=0;return}Swipe.x=e.touches[0].clientX;Swipe.y=e.touches[0].clientY;Swipe.t=now()},{passive:true});
+ m.addEventListener('touchend',e=>{if(!Swipe.t)return;const c=e.changedTouches[0],dx=c.clientX-Swipe.x,dy=c.clientY-Swipe.y,ok=Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*2&&now()-Swipe.t<600;Swipe.t=0;if(!ok)return;
+  const i=S.secs.findIndex(x=>x.id==S.secId),n=S.secs[i+(dx>0?1:-1)];if(n){vib();switchSec(n.id)}},{passive:true})}};
+const secMoves=sc=>{const i=S.secs.indexOf(sc);return[!sc.isDefault&&i>1?['تقديم القسم','right',()=>moveSec(i,-1)]:null,!sc.isDefault&&i<S.secs.length-1?['تأخير القسم','left',()=>moveSec(i,1)]:null].filter(Boolean)};
+async function moveSec(i,d){const a=S.secs.slice();[a[i],a[i+d]]=[a[i+d],a[i]];const stamp=now(),n=a.map((x,k)=>({...x,order:k-1,updatedAt:stamp}));try{if(!S.mem)await DB.put('sections',...n)}catch(e){toast('تعذر حفظ الترتيب ⚠');return}S.secs=n;render()}
+function header(){const v=S.view,sec=secOf(S.secId),T={home:sec.icon+' '+sec.name,sections:'الأقسام',search:'بحث',fav:'المفضلة',settings:'الإعدادات',trash:'المحذوفات',done:'✅ المهام المكتملة'};
+ const sub=v=='home'?stat(sec):v=='sections'?S.secs.length+' أقسام':'احفظها قبل لا تنساها.';
+ $('#hd').replaceChildren(h('div',{class:'t'},h('h1',{},T[v]),h('div',{class:'sub'+(S.mem?' warn':'')},S.mem?'⚠ التخزين غير متاح — لن تُحفظ البيانات':sub),v=='home'?secProg(sec):null),
+  v=='home'?h('button',{class:'ib','aria-label':'القسم والخيارات',onclick:homeMenu},ic('more')):'')}
+function filters(){const v=S.view,box=$('#fl');if(v=='home'){if(live().filter(i=>i.sectionId==S.secId).length<2){S.hf='';return box.replaceChildren()}return box.replaceChildren(...[['','الكل'],['note','ملاحظات'],['task','مهام'],['ref','ثابتة']].map(([t,l])=>h('button',{class:'chip'+(S.hf==t?' on':''),onclick:()=>{S.hf=t;render()}},l)))}if(v!='search')return box.replaceChildren();
+ const c=(l,on,fn)=>h('button',{class:'chip'+(on?' on':''),onclick:fn},l);
+ box.replaceChildren(...[['','الكل'],['note','ملاحظات'],['task','مهام'],['ref','ثابتة']].map(([t,l])=>c(l,S.f.type==t,()=>{S.f.type=t;render()})),
+  c('مفتوحة',S.f.status=='open',()=>{S.f.status=S.f.status=='open'?'':'open';render()}),c('مكتملة',S.f.status=='done',()=>{S.f.status=S.f.status=='done'?'':'done';render()}),
+  c('المفضلة',S.f.fav,()=>{S.f.fav=!S.f.fav;render()}),c('المثبتة',S.f.pin,()=>{S.f.pin=!S.f.pin;render()}))}
+function render(){const v=S.view,m=$('#mn'),st=m.scrollTop;m.replaceChildren();header();tabs();filters();
+ D.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v==(v=='trash'?'settings':v)));
+ $('#cp').hidden=v!='home';composerSync();$('#ts').style.bottom=v=='home'?'calc(172px + env(safe-area-inset-bottom,0px))':'';
+ if(v=='search'){m.append(h('input',{id:'qi',type:'search',placeholder:'ابحث…','aria-label':'بحث',value:S.q,oninput:e=>{S.q=e.target.value;clearTimeout(Search.t);Search.t=setTimeout(()=>{const r=$('#sr');if(r){r.replaceChildren();Views.search(r)}},180)}}),h('div',{id:'sr'}))}
+ Views[v](v=='search'?$('#sr'):m);m.scrollTop=st;S.fresh='';
+ const tk=live().filter(i=>i.type=='task'&&!i.done).length;try{navigator.setAppBadge&&navigator.setAppBadge(tk)}catch(e){}}
+function composerInit(){const ty=$('#ty'),draw=()=>ty.replaceChildren(...Object.entries(CFG.types).map(([k,l])=>h('button',{class:'chip'+(S.ctype==k?' on':''),'aria-pressed':String(S.ctype==k),onclick:()=>{S.ctype=k;draw();composerSync()}},l)));draw();
+ $('#nv').append(...NAV.map(([v,i,l])=>h('button',{'data-v':v,onclick:()=>go(v)},ic(i),l)));
+ $('#bs').onclick=addItem;$('#in').addEventListener('input',()=>{fit();composerSync()});
+ $('#in').addEventListener('keydown',e=>{if(e.key=='Enter'&&!e.isComposing&&(e.ctrlKey||e.metaKey||(S.set.enter&&!e.shiftKey))){e.preventDefault();addItem()}});
+ $('#ba').onclick=()=>Sheet.menu([['من المعرض','img',()=>$('#fg').click()],matchMedia('(pointer:coarse)').matches?['التقاط بالكاميرا','cam',()=>$('#fc').click()]:null]);
+ $('#fg').onchange=$('#fc').onchange=async e=>{const f=[...e.target.files];e.target.value='';const im=f.filter(x=>x.type.startsWith('image/')),ot=f.filter(x=>!x.type.startsWith('image/')&&x.size<=MAXF);if(im.length+ot.length<f.length)toast('تم تجاهل ملف أكبر من 20 ميغا ⚠');S.pend.push(...await Media.pick(im));S.pendF.push(...ot.map(Model.fileFrom));pvRender()};
+ if(!Voice.SR)$('#bm').hidden=true;else $('#bm').onclick=()=>Voice.toggle();
+ $('#zi').onclick=()=>LB.zoom(.5);$('#zo').onclick=()=>LB.zoom(-.5);$('#lx').onclick=()=>$('#lb').close();$('#lp').onclick=()=>LB.go(-1);$('#ln').onclick=()=>LB.go(1);
+ D.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()=='k'){e.preventDefault();go('search')}if($('#lb').open){if(e.key=='ArrowLeft')LB.go(1);if(e.key=='ArrowRight')LB.go(-1)}});
+ $('#fi').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
+  try{const p=await Backup.parse(JSON.parse(await f.text()));if(!p.items.length)throw 0;
+   Sheet.open(h('h3',{},'استيراد نسخة احتياطية'),h('div',{class:'mu'},'العناصر: '+p.items.length+' · الأقسام: '+p.sections.length),
+    h('div',{class:'ro'},h('button',{class:'bt p',onclick:()=>{Sheet.close();Backup.apply(p,'merge')}},'دمج'),h('button',{class:'bt d',onclick:()=>Sheet.confirm('سيتم استبدال كل البيانات الحالية. متابعة؟','استبدال',()=>Backup.apply(p,'replace'))},'استبدال'),h('button',{class:'bt',onclick:Sheet.close},'إلغاء')))}
+  catch(err){toast('الملف غير صالح — لم تتغير بياناتك ⚠')}}}
+
+/* ===================== DETAILS & SECTION FORM ===================== */
+function details(id){const src=byId(id);if(!src)return;let d={...src,steps:src.steps.map(s=>({...s})),images:[...src.images]};
+ const title=h('input',{type:'text',value:d.title,placeholder:'عنوان (اختياري)','aria-label':'العنوان'}),text=h('textarea',{rows:5,'aria-label':'النص'});text.value=d.text;
+ const stepsBox=h('div'),imgBox=h('div',{class:'gr n3'}),typeBox=h('div');
+ const colBox=h('div',{class:'ro cols'},...['','#ef4444','#f97316','#eab308','#22c55e','#3b82f6','#a855f7','#ec4899'].map(c=>h('button',{class:'cdot'+((d.color||'')==c?' on':''),'aria-label':c?'لون '+c:'بدون لون',style:'background:'+(c||'transparent'),onclick:e=>{d.color=c;colBox.querySelectorAll('.cdot').forEach(b=>b.classList.toggle('on',b===e.currentTarget))}},c?'':'∅')),h('input',{type:'color',value:d.color||'#ffffff','aria-label':'لون مخصص',oninput:e=>{d.color=e.target.value;colBox.querySelectorAll('.cdot').forEach(b=>b.classList.remove('on'))}}));
+ const drawSteps=()=>{stepsBox.replaceChildren(...d.steps.map((s,n)=>h('div',{class:'stp'},h('button',{class:'ck'+(s.done?'':''),style:s.done?'background:var(--ok);border-color:var(--ok);color:#fff':'','aria-label':'إكمال الخطوة',onclick:()=>{s.done=!s.done;s.updatedAt=now();drawSteps()}},ic('check')),
+   h('input',{type:'text',value:s.text,'aria-label':'نص الخطوة',oninput:e=>{s.text=e.target.value;s.updatedAt=now()}}),h('button',{class:'mb','aria-label':'حذف الخطوة',onclick:()=>{d.steps.splice(n,1);drawSteps()}},ic('x')))));
+  const inp=h('input',{type:'text',placeholder:'أضف خطوة…','aria-label':'خطوة جديدة',onkeydown:e=>{if(e.key=='Enter'&&inp.value.trim()){d.steps.push(Model.step({text:inp.value.trim()},d.steps.length));drawSteps();stepsBox.lastChild.focus()}}});stepsBox.append(inp)};
+ const drawImgs=()=>imgBox.replaceChildren(...d.images.map((g,n)=>h('div',{style:'position:relative'},h('img',{src:Media.url(g.thumb),alt:'صورة',onclick:()=>LB.open(d.images,n)}),h('button',{class:'ib','aria-label':'إزالة الصورة',style:'position:absolute;top:4px;left:4px;width:32px;height:32px',onclick:()=>{d.images.splice(n,1);drawImgs()}},ic('x')))));
+ const drawType=()=>typeBox.replaceChildren(seg(Object.entries(CFG.types),d.type,v=>{d.type=v}));
+ drawSteps();drawImgs();drawType();
+ const sel=h('select',{'aria-label':'القسم',onchange:e=>{d.sectionId=e.target.value}},S.secs.map(s=>h('option',{value:s.id,selected:s.id==d.sectionId},s.icon+' '+s.name)));
+ const addImg=h('button',{class:'bt',onclick:()=>{const f=h('input',{type:'file',accept:'image/*',multiple:true,onchange:async()=>{d.images.push(...await Media.pick([...f.files]));drawImgs()}});f.click()}},ic('img'),'إضافة صورة');
+ const fdd=(l,c)=>h('div',{class:'fd'},h('label',{},l),c);
+ Sheet.open(h('h3',{},'التفاصيل'),fdd('النوع',typeBox),fdd('العنوان',title),fdd('النص',text),fdd('القسم',sel),fdd('الخطوات',stepsBox),fdd('الصور',h('div',{},imgBox,addImg)),
+  h('div',{class:'mu',style:'margin-bottom:12px'},'أُنشئ: '+fmt(d.createdAt)+' · آخر تعديل: '+fmt(d.updatedAt),d.type=='task'&&d.completedAt?' · اكتمل: '+fmt(d.completedAt):''),
+  h('div',{class:'mu'},'لون النص'),colBox,h('div',{class:'ro'},h('button',{class:'bt p',onclick:async()=>{d.title=title.value.trim();d.text=text.value.trim();if(!d.title&&!d.text&&!d.images.length&&!d.steps.length)return toast('أضف نصًا أو صورة أولًا');
+    d.steps=d.steps.filter(s=>s.text.trim()).map((s,n)=>({...s,order:n}));d.done=d.type=='task'&&(d.done||(d.steps.length>0&&d.steps.every(s=>s.done)));d.completedAt=d.done?(src.completedAt||now()):null;
+    if(await commit(patch(src,{type:d.type,title:d.title,text:d.text,sectionId:d.sectionId,steps:d.steps,images:d.images,color:d.color||'',done:d.done,completedAt:d.completedAt}),'تم الحفظ'))Sheet.close()}},'حفظ'),h('button',{class:'bt',onclick:Sheet.close},'إلغاء')),
+  h('div',{class:'ro'},h('button',{class:'bt','aria-label':'نسخ',onclick:()=>copy([d.title,text.value].filter(Boolean).join('\n'))},ic('copy')),navigator.share?h('button',{class:'bt','aria-label':'مشاركة',onclick:()=>share(src)},ic('share')):null,
+   h('button',{class:'bt','aria-label':'مفضلة',onclick:async()=>{await toggle(src,'favorite');Sheet.close()}},ic('star')),h('button',{class:'bt','aria-label':'تثبيت',onclick:async()=>{await toggle(src,'pinned');Sheet.close()}},ic('pin')),
+   h('button',{class:'bt d','aria-label':'حذف',onclick:()=>{Sheet.close();trashItem(src)}},ic('trash'))))}
+function sectionForm(s){const n=s||Model.section({order:S.secs.length}),name=h('input',{type:'text',value:s?n.name:'',placeholder:'اسم القسم','aria-label':'اسم القسم'}),desc=h('input',{type:'text',value:n.description,placeholder:'وصف (اختياري)','aria-label':'الوصف'}),icon=h('input',{type:'text',value:n.icon,maxlength:4,'aria-label':'الأيقونة'});
+ Sheet.open(h('h3',{},s?'تعديل القسم':'قسم جديد'),h('div',{class:'fd'},h('label',{},'الاسم'),name),h('div',{class:'fd'},h('label',{},'الوصف'),desc),h('div',{class:'fd'},h('label',{},'الأيقونة (إيموجي)'),icon),
+  h('div',{class:'ro'},h('button',{class:'bt p',onclick:async()=>{if(!name.value.trim())return toast('اكتب اسم القسم');if(await saveSection({...n,name:name.value.trim(),description:desc.value.trim(),icon:icon.value.trim()||'📁'})){Sheet.close();toast('تم الحفظ')}}},'حفظ'),h('button',{class:'bt',onclick:Sheet.close},'إلغاء')));name.focus()}
+
+/* ===================== THEME ===================== */
+const Theme={apply(){const t=S.set.th=='system'?(matchMedia('(prefers-color-scheme:light)').matches?'light':'dark'):S.set.th;D.documentElement.dataset.th=t;D.documentElement.dataset.ac=S.set.ac;$('meta[name=theme-color]').content=t=='dark'?'#0e1116':'#f4f5f8'}};
+matchMedia('(prefers-color-scheme:light)').addEventListener('change',Theme.apply);
+
+/* ===================== INTRO ===================== */
+const Intro={t0:performance.now(),el:$('#intro'),done:false,ready:false,tapped:false,
+ skip(){const el=Intro.el;if(Intro.done||!el)return;Intro.done=true;D.body.classList.add('booted');el.classList.add('out');setTimeout(()=>el.remove(),reduced()?0:900);setTimeout(()=>D.body.classList.remove('booted'),1500)},
+ end(){Intro.ready=true;if(S.set.intro===false||Intro.tapped)return Intro.skip();setTimeout(Intro.skip,Math.max(0,(reduced()?700:2900)-(performance.now()-Intro.t0)))}};
+if(Intro.el)Intro.el.onclick=()=>{Intro.tapped=true;if(Intro.ready)Intro.skip()};
+/* ===================== BOOT ===================== */
+async function legacyImport(){/* one-time adapter for the previous 'quick-notes' database */
+ try{if(!indexedDB.databases||!(await indexedDB.databases()).some(x=>x.name==CFG.legacyDb))return 0;
+  const old=await new Promise((ok,no)=>{const r=indexedDB.open(CFG.legacyDb);r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)});
+  if(!old.objectStoreNames.contains('items')){old.close();return 0}
+  const rows=await new Promise((ok,no)=>{const q=old.transaction('items').objectStore('items').getAll();q.onsuccess=()=>ok(q.result);q.onerror=()=>no(q.error)});old.close();
+  const items=(await Promise.all(rows.map(Model.legacy))).filter(Boolean);if(items.length)await DB.put('items',...items);return items.length}catch(e){return 0}}
+(async()=>{
+ try{await DB.open();
+  let secs=await DB.all('sections');if(!secs.some(s=>s.isDefault)){const d=Model.section({id:CFG.defSec,name:'سريع',icon:'⚡',order:-1,isDefault:true});await DB.put('sections',d);secs.push(d)}
+  S.secs=secs.map(Model.section).sort((a,b)=>a.order-b.order);
+  S.set={...CFG.defaults,...(await DB.getMeta('settings')||{})};
+  if(!(await DB.getMeta('legacyDone'))){const n=await legacyImport();await DB.setMeta('legacyDone',true);if(n)setTimeout(()=>toast('تم استيراد '+n+' عنصر من النسخة السابقة'),600)}
+  S.items=(await DB.all('items')).map(Model.item);S.items=S.items.map(i=>S.secs.some(x=>x.id==i.sectionId)?i:{...i,sectionId:CFG.defSec});
+  if(S.set.purge){const lim=now()-S.set.purge*864e5,old=S.items.filter(i=>i.deletedAt&&i.deletedAt<lim);if(old.length){await DB.del('items',...old.map(i=>i.id));await Sync.addTombstones(old.map(i=>'item:'+i.id));S.items=S.items.filter(i=>!old.includes(i))}}
+  navigator.storage&&navigator.storage.persist&&navigator.storage.persist();
+ }catch(e){S.mem=true;S.secs=[Model.section({id:CFG.defSec,name:'سريع',icon:'⚡',order:-1,isDefault:true})];toast('التخزين المحلي غير متاح — لن تُحفظ البيانات ⚠')}
+ Theme.apply();composerInit();Back.init();Swipe.init();render();
+  setTimeout(()=>Sync.connect().then(()=>{if(Sync.user)Sync.pullMerge().catch(e=>Sync.status('تعذر التزامن؛ بياناتك المحلية باقية'))}).catch(()=>{}),700);
+})().catch(e=>toast('حدث خطأ غير متوقع ⚠')).finally(()=>Intro.end());
+addEventListener('unhandledrejection',e=>{e.preventDefault();toast('حدث خطأ غير متوقع ⚠')});
+</script>
+</body>
+</html>
